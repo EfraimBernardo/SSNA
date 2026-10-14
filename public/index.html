@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html lang="pt-AO" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Admissões | 1º e 2º Ciclo do Ensino Secundário (CL-FUTURO)</title>
+  <meta name="description" content="Portal oficial de seleção e admissão de novos alunos para o 1º e 2º Ciclo do Ensino Secundário (Geral e Técnico-Profissional). Inscrições online, acompanhamento de candidaturas e painel da secretaria escolar.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏫</text></svg>">
+
+  <!-- Tailwind CSS via CDN com Configuração Customizada -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'navy-dark': '#0B192C',
+            'navy-card': '#1E3E62',
+            'navy-light': '#254d79',
+            'navy-border': '#2E5784',
+            'accent': '#008BFF',
+            'accent-hover': '#0066FF',
+            'surface-light': '#FFFFFF',
+            'bg-light': '#F4F6F9',
+            'text-light': '#1A202C',
+            'text-dark': '#F7FAFC',
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- Estilos Customizados da Aplicação -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-bg-light text-text-light dark:bg-navy-dark dark:text-text-dark min-h-screen flex flex-col antialiased selection:bg-accent selection:text-white">
+
+  <!-- ====================================================================== -->
+  <!-- TOAST NOTIFICATIONS CONTAINER                                          -->
+  <!-- ====================================================================== -->
+  <div id="toast-container" class="fixed top-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+
+  <!-- ====================================================================== -->
+  <!-- HEADER / BARRA DE NAVEGAÇÃO SUPERIOR                                   -->
+  <!-- ====================================================================== -->
+  <header class="sticky top-0 z-40 w-full bg-white/90 dark:bg-navy-dark/95 backdrop-blur-md border-b border-gray-200/80 dark:border-navy-border/60 transition-colors shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Logotipo & Nome da Instituição de Ensino Secundário -->
+      <div class="flex items-center gap-3.5">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-accent-hover flex items-center justify-center text-white shadow-lg shadow-accent/25 ring-2 ring-accent/30 shrink-0">
+          <i class="fa-solid fa-school text-2xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-white font-sans">
+              CL<span class="text-accent">-FUTURO</span>
+            </span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase bg-accent/15 text-accent border border-accent/30 hidden sm:inline-block">
+              1º & 2º Ciclo Secundário
+            </span>
+          </div>
+          <p class="text-xs text-gray-500 dark:text-gray-400 font-medium truncate max-w-[200px] sm:max-w-none">
+            Complexo Escolar & Liceu Politécnico do Futuro • Inscrições 2025/2026
+          </p>
+        </div>
+      </div>
+
+      <!-- Controles Centrais e Alternadores -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        
+        <!-- Seletor de Perfil (Candidato/Encarregado vs Admin) -->
+        <nav class="flex items-center p-1 rounded-xl bg-gray-100 dark:bg-navy-card/80 border border-gray-200 dark:border-navy-border/60">
+          <button 
+            id="nav-btn-candidate" 
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 bg-accent text-white shadow-md"
+            title="Portal de Inscrições do Aluno / Encarregado"
+          >
+            <i class="fa-solid fa-user-graduate"></i>
+            <span class="hidden md:inline">Portal do</span> Candidato
+          </button>
+          
+          <button 
+            id="nav-btn-admin" 
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white relative"
+            title="Painel de Controle da Secretaria Pedagógica"
+          >
+            <i class="fa-solid fa-shield-halved"></i>
+            <span class="hidden md:inline">Painel</span> Admin
+            <span id="admin-pending-badge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white hidden">0</span>
+          </button>
+        </nav>
+
+        <!-- Botão Alternador de Tema (Light / Dark) -->
+        <button 
+          id="theme-toggle-btn" 
+          class="px-3 h-10 rounded-xl bg-gray-100 dark:bg-navy-card border border-gray-200 dark:border-navy-border text-gray-700 dark:text-gray-200 flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-navy-light transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-accent"
+          aria-label="Alternar Tema Claro / Noturno"
+          title="Alternar Tema Claro / Escuro"
+        >
+          <i id="theme-toggle-icon" class="fa-solid fa-sun text-amber-400 text-base"></i>
+          <span id="theme-toggle-text" class="text-xs font-semibold hidden sm:inline">Modo Claro</span>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================== -->
+  <!-- CONTEÚDO PRINCIPAL (SPA CONTAINER)                                     -->
+  <!-- ====================================================================== -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ==================================================================== -->
+    <!-- VISÃO 1: PORTAL DO CANDIDATO & ENCARREGADO DE EDUCAÇÃO               -->
+    <!-- ==================================================================== -->
+    <div id="view-candidate" class="transition-all duration-300">
+
+      <!-- ================================================================== -->
+      <!-- SUB-VIEW 1.A: FORMULÁRIO DE INSCRIÇÃO COM STEPPER (4 PASSOS)        -->
+      <!-- ================================================================== -->
+      <div id="candidate-form-wrapper" class="space-y-8">
+        
+        <!-- Cabeçalho Informativo & Ações Rápidas -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-accent/10 via-sky-500/5 to-transparent dark:from-navy-card dark:to-navy-dark p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-accent/15 text-accent border border-accent/25 mb-2">
+              <i class="fa-solid fa-bullhorn animate-pulse"></i> Inscrições Abertas • 1º e 2º Ciclo do Ensino Secundário (2025/2026)
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+              Candidatura de Novos Alunos • Ensino Secundário
+            </h1>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 max-w-2xl leading-relaxed">
+              Inscrições para o <strong>1º Ciclo (7ª, 8ª e 9ª Classe)</strong> e para o <strong>2º Ciclo (10ª Classe Geral / Liceu e Técnico-Profissional)</strong>. Preencha as 4 etapas com os dados do aluno e do encarregado de educação.
+            </p>
+          </div>
+
+          <!-- Ações Rápidas -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <button 
+              id="btn-demo-fill" 
+              type="button" 
+              class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-gray-200/80 dark:bg-navy-light text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-accent hover:text-white transition-all flex items-center gap-2 shadow-sm"
+              title="Preencher com dados fictícios de aluno secundário para teste rápido"
+            >
+              <i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+              Preencher Demo
+            </button>
+            <button 
+              id="btn-view-my-application" 
+              type="button" 
+              class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-navy-card text-accent border border-accent/40 hover:bg-accent hover:text-white transition-all flex items-center gap-2 shadow-sm"
+            >
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              Acompanhar Inscrição
+            </button>
+            <button 
+              id="btn-shortcut-admin" 
+              type="button" 
+              class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-navy-card text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-navy-border hover:border-accent hover:text-accent transition-all flex items-center gap-2 shadow-sm"
+              title="Acessar Painel da Secretaria Pedagógica"
+            >
+              <i class="fa-solid fa-shield-halved text-accent"></i>
+              Ver Admin
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- CONSULTA RÁPIDA / CÓDIGO DE VERIFICAÇÃO DE CANDIDATURA           -->
+        <!-- ================================================================ -->
+        <div class="p-6 rounded-3xl bg-white dark:bg-navy-card border border-gray-200/80 dark:border-navy-border shadow-sm">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+              <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-accent/15 text-accent border border-accent/25 mb-1">
+                <i class="fa-solid fa-qrcode"></i> Consulta Online de Candidatura
+              </div>
+              <h3 class="font-bold text-base text-gray-900 dark:text-white flex items-center gap-2">
+                Já se inscreveu? Consulte o estado da sua candidatura por código
+              </h3>
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Digite o seu código de verificação para saber se foi admitido e verificar em qual passo está o seu processo.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2 max-w-md w-full">
+              <div class="relative flex-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                  <i class="fa-solid fa-barcode text-sm"></i>
+                </span>
+                <input 
+                  type="text" 
+                  id="input-tracking-code" 
+                  placeholder="Ex: SEC-2025-0101" 
+                  class="w-full pl-10 pr-3 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 font-mono text-xs uppercase focus:outline-none focus:ring-2 focus:ring-accent"
+                >
+              </div>
+              <button 
+                type="button" 
+                id="btn-verify-tracking-code" 
+                class="px-5 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-white font-bold text-xs shadow-md shadow-accent/20 transition-all flex items-center gap-1.5 shrink-0"
+              >
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Verificar</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Exemplos Rápidos para Teste Imediato -->
+          <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-navy-border/60 text-[11px] text-gray-500 dark:text-gray-400">
+            <span class="font-semibold">Códigos de demonstração para teste rápido:</span>
+            <button type="button" class="btn-sample-code px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-navy-dark text-emerald-500 hover:bg-emerald-500 hover:text-white font-mono font-bold text-xs transition-colors" data-code="SEC-2025-0101">
+              SEC-2025-0101 (Média 17.5 • Admitido)
+            </button>
+            <button type="button" class="btn-sample-code px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-navy-dark text-rose-500 hover:bg-rose-500 hover:text-white font-mono font-bold text-xs transition-colors" data-code="SEC-2025-0104">
+              SEC-2025-0104 (Média 8.3 • Não Admitido)
+            </button>
+            <button type="button" class="btn-sample-code px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-navy-dark text-amber-500 hover:bg-amber-500 hover:text-white font-mono font-bold text-xs transition-colors" data-code="SEC-2025-0102">
+              SEC-2025-0102 (Média 11.5 • Em Análise)
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- ESTEIRA DE PROGRESSO (STEPPER INTERATIVO - 4 ETAPAS)            -->
+        <!-- ================================================================ -->
+        <div class="bg-white dark:bg-navy-card p-6 sm:p-8 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+          
+          <div class="relative flex items-center justify-between max-w-3xl mx-auto px-4">
+            <!-- Linha Base do Stepper -->
+            <div class="stepper-line"></div>
+            <!-- Linha de Progresso Dinâmica -->
+            <div id="stepper-progress-line" class="stepper-progress" style="width: 0%;"></div>
+
+            <!-- Passo 1: Aluno & Encarregado -->
+            <div class="stepper-node flex flex-col items-center cursor-pointer group" data-step="1">
+              <div class="stepper-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-accent text-white ring-4 ring-accent/30 shadow-lg pulse-badge z-10 transition-all">
+                <span>1</span>
+              </div>
+              <span class="stepper-label text-xs font-bold mt-2 text-accent hidden sm:block">
+                Aluno & Encarregado
+              </span>
+            </div>
+
+            <!-- Passo 2: Ciclo & Opção Escolar -->
+            <div class="stepper-node flex flex-col items-center cursor-pointer group" data-step="2">
+              <div class="stepper-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-gray-200 dark:bg-navy-light text-gray-500 dark:text-gray-400 z-10 transition-all">
+                <span>2</span>
+              </div>
+              <span class="stepper-label text-xs font-medium mt-2 text-gray-500 dark:text-gray-400 hidden sm:block">
+                Ciclo & Curso/Classe
+              </span>
+            </div>
+
+            <!-- Passo 3: Documentação Escolar -->
+            <div class="stepper-node flex flex-col items-center cursor-pointer group" data-step="3">
+              <div class="stepper-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-gray-200 dark:bg-navy-light text-gray-500 dark:text-gray-400 z-10 transition-all">
+                <span>3</span>
+              </div>
+              <span class="stepper-label text-xs font-medium mt-2 text-gray-500 dark:text-gray-400 hidden sm:block">
+                Documentação
+              </span>
+            </div>
+
+            <!-- Passo 4: Confirmação -->
+            <div class="stepper-node flex flex-col items-center cursor-pointer group" data-step="4">
+              <div class="stepper-circle w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm bg-gray-200 dark:bg-navy-light text-gray-500 dark:text-gray-400 z-10 transition-all">
+                <span>4</span>
+              </div>
+              <span class="stepper-label text-xs font-medium mt-2 text-gray-500 dark:text-gray-400 hidden sm:block">
+                Confirmação
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- FORMULÁRIO MULTI-STEP                                            -->
+        <!-- ================================================================ -->
+        <div id="candidate-form-container" class="bg-white dark:bg-navy-card p-6 sm:p-10 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+          <form id="admission-form" onsubmit="return false;" novalidate>
+
+            <!-- ------------------------------------------------------------ -->
+            <!-- ETAPA 1: DADOS DO ALUNO E ENCARREGADO DE EDUCAÇÃO            -->
+            <!-- ------------------------------------------------------------ -->
+            <div id="step-content-1" class="space-y-8 animate-fade-in">
+              
+              <!-- Seção A: Identificação do Aluno -->
+              <div>
+                <div class="border-b border-gray-100 dark:border-navy-border/70 pb-3 mb-5">
+                  <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-sm">
+                      <i class="fa-solid fa-child"></i>
+                    </span>
+                    1. Dados de Identificação do Aluno (Candidato)
+                  </h2>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Preencha os dados oficiais do aluno conforme certidão de nascimento, cédula ou BI.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  
+                  <!-- Nome Completo do Aluno -->
+                  <div class="lg:col-span-2">
+                    <label for="input-fullname" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Nome Completo do Aluno <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-user text-sm"></i>
+                      </span>
+                      <input 
+                        type="text" 
+                        id="input-fullname" 
+                        name="fullname" 
+                        placeholder="Ex: Afonso Gabriel dos Santos"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                        required
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Tipo de Documento -->
+                  <div>
+                    <label for="input-document-type" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Tipo de Documento do Aluno <span class="text-rose-500">*</span>
+                    </label>
+                    <select 
+                      id="input-document-type" 
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                    >
+                      <option value="Bilhete de Identidade">Bilhete de Identidade (BI)</option>
+                      <option value="Cédula Pessoal">Cédula Pessoal</option>
+                      <option value="Assento de Nascimento">Assento / Certidão de Nascimento</option>
+                      <option value="Passaporte">Passaporte (Estrangeiro)</option>
+                    </select>
+                  </div>
+
+                  <!-- Número do Documento do Aluno -->
+                  <div>
+                    <label for="input-document-id" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Nº do Documento do Aluno <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-id-card text-sm"></i>
+                      </span>
+                      <input 
+                        type="text" 
+                        id="input-document-id" 
+                        placeholder="Ex: 009418293LA046 ou Nº de Assento"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm uppercase transition-all"
+                        required
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Data de Nascimento -->
+                  <div>
+                    <label for="input-birthdate" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Data de Nascimento do Aluno <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-calendar-days text-sm"></i>
+                      </span>
+                      <input 
+                        type="date" 
+                        id="input-birthdate" 
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                        required
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Gênero -->
+                  <div>
+                    <label for="input-gender" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Gênero
+                    </label>
+                    <select 
+                      id="input-gender" 
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                    >
+                      <option value="Masculino">Masculino</option>
+                      <option value="Feminino">Feminino</option>
+                    </select>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Seção B: Dados do Encarregado de Educação -->
+              <div>
+                <div class="border-b border-gray-100 dark:border-navy-border/70 pb-3 mb-5">
+                  <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl bg-amber-500/15 text-amber-500 flex items-center justify-center text-sm">
+                      <i class="fa-solid fa-user-shield"></i>
+                    </span>
+                    2. Dados do Encarregado de Educação (Pai, Mãe ou Tutor Legal)
+                  </h2>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Responsável legal pelo aluno perante a Direcção da Escola e Secretaria Pedagógica.
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                  
+                  <!-- Nome do Encarregado -->
+                  <div class="lg:col-span-2">
+                    <label for="input-guardian-name" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Nome Completo do Encarregado <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="input-guardian-name" 
+                      placeholder="Ex: Gabriel António dos Santos"
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                      required
+                    >
+                  </div>
+
+                  <!-- Grau de Parentesco -->
+                  <div>
+                    <label for="input-guardian-kinship" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Grau de Parentesco <span class="text-rose-500">*</span>
+                    </label>
+                    <select 
+                      id="input-guardian-kinship" 
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                    >
+                      <option value="Pai">Pai</option>
+                      <option value="Mãe">Mãe</option>
+                      <option value="Tio/Tia">Tio / Tia</option>
+                      <option value="Avô/Avó">Avô / Avó</option>
+                      <option value="Tutor Legal">Tutor Legal / Responsável</option>
+                    </select>
+                  </div>
+
+                  <!-- Telefone do Encarregado -->
+                  <div>
+                    <label for="input-guardian-phone" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      Telefone do Encarregado <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-phone text-sm"></i>
+                      </span>
+                      <input 
+                        type="tel" 
+                        id="input-guardian-phone" 
+                        placeholder="+244 923 000 000"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                        required
+                      >
+                    </div>
+                  </div>
+
+                  <!-- E-mail do Encarregado -->
+                  <div class="lg:col-span-2">
+                    <label for="input-guardian-email" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      E-mail do Encarregado (Para comunicados e pautas)
+                    </label>
+                    <div class="relative">
+                      <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                        <i class="fa-solid fa-envelope text-sm"></i>
+                      </span>
+                      <input 
+                        type="email" 
+                        id="input-guardian-email" 
+                        placeholder="encarregado@email.com"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                      >
+                    </div>
+                  </div>
+
+                  <!-- E-mail / Contato Secundário do Aluno (Opcional) -->
+                  <div class="lg:col-span-2">
+                    <label for="input-email" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                      E-mail do Aluno (Opcional)
+                    </label>
+                    <input 
+                      type="email" 
+                      id="input-email" 
+                      placeholder="aluno@email.com (se possuir)"
+                      class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                    >
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Seção C: Residência Familiar -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+                <!-- Província -->
+                <div>
+                  <label for="input-province" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    Província de Residência <span class="text-rose-500">*</span>
+                  </label>
+                  <select 
+                    id="input-province" 
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                  >
+                    <option value="Luanda">Luanda</option>
+                    <option value="Benguela">Benguela</option>
+                    <option value="Huíla">Huíla</option>
+                    <option value="Huambo">Huambo</option>
+                    <option value="Cuanza Sul">Cuanza Sul</option>
+                    <option value="Outra">Outra Província</option>
+                  </select>
+                </div>
+
+                <!-- Município -->
+                <div>
+                  <label for="input-city" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    Município de Residência <span class="text-rose-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="input-city" 
+                    placeholder="Ex: Talatona / Viana / Belas / Maianga"
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                    required
+                  >
+                </div>
+
+                <!-- Endereço / Bairro / Rua -->
+                <div>
+                  <label for="input-street" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                    Bairro, Rua e Número da Residência
+                  </label>
+                  <input 
+                    type="text" 
+                    id="input-street" 
+                    placeholder="Ex: Bairro Benfica, Rua dos Navegantes, Casa 12"
+                    class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                  >
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ------------------------------------------------------------ -->
+            <!-- ETAPA 2: ESCOLHA DE CICLO, CLASSE & CURSO                    -->
+            <!-- ------------------------------------------------------------ -->
+            <div id="step-content-2" class="space-y-6 hidden">
+              <div class="border-b border-gray-100 dark:border-navy-border/70 pb-4">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </span>
+                  Etapa 2: Escolha de Ciclo, Classe e Curso/Área Pretendida
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Selecione o nível escolar do ensino secundário em que o aluno deseja ingressar para o ano letivo 2025/2026.
+                </p>
+              </div>
+
+              <!-- Filtro / Seletor de Ciclos de Ensino Secundário -->
+              <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-3">
+                  Filtrar Nível de Ensino Secundário:
+                </label>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button type="button" class="cycle-pill-btn px-4 py-2 rounded-xl text-xs font-bold bg-[#008BFF] text-white shadow-md transition-all" data-cycle="all">
+                    Todos os Níveis
+                  </button>
+                  <button type="button" class="cycle-pill-btn px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-navy-card text-gray-700 dark:text-gray-300 hover:border-accent transition-all" data-cycle="1º Ciclo">
+                    <i class="fa-solid fa-book-open text-accent mr-1"></i> 1º Ciclo (7ª à 9ª Classe)
+                  </button>
+                  <button type="button" class="cycle-pill-btn px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-navy-card text-gray-700 dark:text-gray-300 hover:border-accent transition-all" data-cycle="2º Ciclo Geral">
+                    <i class="fa-solid fa-landmark text-amber-500 mr-1"></i> 2º Ciclo Geral (Liceu / PUNIV)
+                  </button>
+                  <button type="button" class="cycle-pill-btn px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 dark:bg-navy-card text-gray-700 dark:text-gray-300 hover:border-accent transition-all" data-cycle="2º Ciclo Técnico">
+                    <i class="fa-solid fa-microchip text-emerald-500 mr-1"></i> 2º Ciclo Técnico (Instituto Politécnico)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Cards de Opções Escolares (1º e 2º Ciclo) -->
+              <div>
+                <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-3">
+                  Selecione a Classe / Curso do Aluno <span class="text-rose-500">*</span>
+                </label>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="courses-selection-grid">
+                  
+                  <!-- OPÇÃO 1: 1º Ciclo - 7ª Classe -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="1º Ciclo" data-course-id="7a">
+                    <input type="radio" name="selected-course" value="7ª Classe - 1º Ciclo do Ensino Secundário Geral" data-cycle-label="1º Ciclo do Ensino Secundário" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-accent flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-book"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/10 text-accent mb-1">1º Ciclo • Ingresso Regular</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">7ª Classe - Ensino Geral</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Ingresso inicial após conclusão da 6ª classe primária. Base geral com laboratório e línguas.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 3 Anos (7ª à 9ª)</span> • <span>Certificado do 1º Ciclo</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 2: 1º Ciclo - 8ª e 9ª Classe (Transferência) -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="1º Ciclo" data-course-id="8a-9a">
+                    <input type="radio" name="selected-course" value="8ª ou 9ª Classe - Transferência / 1º Ciclo Geral" data-cycle-label="1º Ciclo do Ensino Secundário" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-accent flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/10 text-accent mb-1">1º Ciclo • Mudança de Escola</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">8ª ou 9ª Classe (Transferência)</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Para alunos transferidos de outras escolas para continuidade do 1º Ciclo.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> Ensino Geral</span> • <span>Vagas Limitadas</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 3: 2º Ciclo Técnico - Informática (SELECIONADO POR PADRÃO) -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-accent bg-accent/5 dark:bg-accent/10 ring-2 ring-accent cursor-pointer transition-all hover:shadow-md" data-cycle-category="2º Ciclo Técnico" data-course-id="info">
+                    <input type="radio" name="selected-course" value="10ª Classe - Técnico de Informática (Sistemas & Redes)" data-cycle-label="2º Ciclo Técnico-Profissional" class="sr-only" checked>
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-accent/20 text-accent flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-laptop-code"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-accent/10 text-accent mb-1">2º Ciclo Técnico • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Técnico de Informática</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Programação, montagem e manutenção, redes de computadores e robótica educativa.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 4 Anos (10ª à 13ª)</span> • <span>Diploma Técnico Médio</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 4: 2º Ciclo Geral - Ciências Físicas e Biológicas -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="2º Ciclo Geral" data-course-id="cfb">
+                    <input type="radio" name="selected-course" value="10ª Classe - Ciências Físicas e Biológicas (Saúde & Natureza)" data-cycle-label="2º Ciclo Geral (Liceu / PUNIV)" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-500 flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-dna"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-500 mb-1">2º Ciclo Liceu • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Ciências Físicas e Biológicas</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Formação pré-universitária para Medicina, Biologia, Farmácia e Agronomia.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 3 Anos (10ª à 12ª)</span> • <span>Certificado do Liceu</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 5: 2º Ciclo Geral - Ciências Económicas e Jurídicas -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="2º Ciclo Geral" data-course-id="cej">
+                    <input type="radio" name="selected-course" value="10ª Classe - Ciências Económicas e Jurídicas (PUNIV)" data-cycle-label="2º Ciclo Geral (Liceu / PUNIV)" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 mb-1">2º Ciclo Liceu • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Ciências Económicas & Jurídicas</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Economia, Direito, Filosofia e Ciências Sociais para preparação pré-universitária.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 3 Anos (10ª à 12ª)</span> • <span>Certificado do Liceu</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 6: 2º Ciclo Técnico - Contabilidade e Gestão -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="2º Ciclo Técnico" data-course-id="contab">
+                    <input type="radio" name="selected-course" value="10ª Classe - Contabilidade e Gestão Empresarial" data-cycle-label="2º Ciclo Técnico-Profissional" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-calculator"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/10 text-purple-400 mb-1">2º Ciclo Técnico • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Contabilidade & Gestão</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Prática contábil, fiscalidade, finanças empresariais e software de gestão Primavera.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 4 Anos (10ª à 13ª)</span> • <span>Diploma Técnico Médio</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 7: 2º Ciclo Técnico - Enfermagem Geral -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="2º Ciclo Técnico" data-course-id="saude">
+                    <input type="radio" name="selected-course" value="10ª Classe - Enfermagem Geral & Saúde" data-cycle-label="2º Ciclo Técnico-Profissional" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-user-nurse"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/10 text-rose-400 mb-1">2º Ciclo Técnico • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Enfermagem Geral</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Cuidados primários de saúde, anatomia, farmacologia e estágio hospitalar supervisionado.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 4 Anos (10ª à 13ª)</span> • <span>Diploma Técnico Médio</span>
+                    </div>
+                  </div>
+
+                  <!-- OPÇÃO 8: 2º Ciclo Técnico - Construção Civil -->
+                  <div class="course-option-card relative p-4 rounded-2xl border-2 border-gray-200 dark:border-navy-border bg-gray-50/50 dark:bg-navy-dark/50 cursor-pointer transition-all hover:border-accent hover:shadow-md" data-cycle-category="2º Ciclo Técnico" data-course-id="obras">
+                    <input type="radio" name="selected-course" value="10ª Classe - Construção Civil & Desenho Projetista" data-cycle-label="2º Ciclo Técnico-Profissional" class="sr-only">
+                    <div class="flex items-start justify-between">
+                      <div class="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center text-lg mb-3">
+                        <i class="fa-solid fa-trowel-bricks"></i>
+                      </div>
+                      <span class="check-indicator text-accent text-lg hidden">
+                        <i class="fa-solid fa-circle-check"></i>
+                      </span>
+                    </div>
+                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-orange-500/10 text-orange-400 mb-1">2º Ciclo Técnico • 10ª Classe</span>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-sm">Construção Civil & Obras</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-300 mt-1">Desenho técnico, topografia, medições, cálculo de estruturas e fiscalização de obras.</p>
+                    <div class="flex items-center gap-2 mt-3 pt-2 border-t border-gray-200/50 dark:border-navy-border/50 text-[11px] text-gray-400">
+                      <span><i class="fa-regular fa-clock"></i> 4 Anos (10ª à 13ª)</span> • <span>Diploma Técnico Médio</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Turno e Modalidade Escolar -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                
+                <!-- Turno de Aulas -->
+                <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-3">
+                    Turno Escolar Pretendido <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="space-y-2.5">
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card cursor-pointer hover:border-accent">
+                      <div class="flex items-center gap-3">
+                        <input type="radio" name="selected-shift" value="Manhã" checked class="text-accent focus:ring-accent">
+                        <div>
+                          <div class="font-semibold text-xs text-gray-900 dark:text-white">Turno da Manhã</div>
+                          <div class="text-[11px] text-gray-500 dark:text-gray-400">07:00 às 12:30 (Recomendado)</div>
+                        </div>
+                      </div>
+                      <i class="fa-solid fa-sun text-amber-500 text-sm"></i>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card cursor-pointer hover:border-accent">
+                      <div class="flex items-center gap-3">
+                        <input type="radio" name="selected-shift" value="Tarde" class="text-accent focus:ring-accent">
+                        <div>
+                          <div class="font-semibold text-xs text-gray-900 dark:text-white">Turno da Tarde</div>
+                          <div class="text-[11px] text-gray-500 dark:text-gray-400">13:00 às 18:00</div>
+                        </div>
+                      </div>
+                      <i class="fa-solid fa-cloud-sun text-sky-500 text-sm"></i>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Modalidade de Ingresso Escolar -->
+                <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border">
+                  <label class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-3">
+                    Modalidade de Candidatura Escolar <span class="text-rose-500">*</span>
+                  </label>
+                  <div class="space-y-2.5">
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card cursor-pointer hover:border-accent">
+                      <div class="flex items-center gap-3">
+                        <input type="radio" name="selected-modality" value="Exame de Admissão" checked class="text-accent focus:ring-accent">
+                        <div>
+                          <div class="font-semibold text-xs text-gray-900 dark:text-white">Exame de Diagnóstico / Admissão</div>
+                          <div class="text-[11px] text-gray-500 dark:text-gray-400">Prova escrita presencial de Matemática e Língua Portuguesa</div>
+                        </div>
+                      </div>
+                      <i class="fa-solid fa-pen-ruler text-accent text-sm"></i>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card cursor-pointer hover:border-accent">
+                      <div class="flex items-center gap-3">
+                        <input type="radio" name="selected-modality" value="Mérito Escolar (Conclusão 6ª/9ª Classe)" class="text-accent focus:ring-accent">
+                        <div>
+                          <div class="font-semibold text-xs text-gray-900 dark:text-white">Acesso Direto por Mérito Escolar</div>
+                          <div class="text-[11px] text-gray-500 dark:text-gray-400">Para alunos com média igual ou superior a 14 valores</div>
+                        </div>
+                      </div>
+                      <i class="fa-solid fa-award text-amber-500 text-sm"></i>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card cursor-pointer hover:border-accent">
+                      <div class="flex items-center gap-3">
+                        <input type="radio" name="selected-modality" value="Transferência Escolar" class="text-accent focus:ring-accent">
+                        <div>
+                          <div class="font-semibold text-xs text-gray-900 dark:text-white">Transferência de Outra Escola</div>
+                          <div class="text-[11px] text-gray-500 dark:text-gray-400">Mudança de estabelecimento com declaração de frequência</div>
+                        </div>
+                      </div>
+                      <i class="fa-solid fa-arrows-split-up-and-left text-emerald-500 text-sm"></i>
+                    </label>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Campus Escolar -->
+              <div>
+                <label for="select-campus" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-2">
+                  Campus Escolar
+                </label>
+                <select 
+                  id="select-campus" 
+                  class="w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent text-sm transition-all"
+                >
+                  <option value="Sede Principal - Liceu & Politécnico (Talatona)">Sede Principal - Liceu & Instituto Politécnico (Talatona)</option>
+                  <option value="Polo Escolar do Kilamba">Polo Escolar da Centralidade do Kilamba</option>
+                  <option value="Polo Escolar de Viana">Polo Escolar de Viana (Complexo Integrado)</option>
+                </select>
+              </div>
+
+              <!-- Histórico Escolar & Cálculo Automático da Média -->
+              <div class="p-6 rounded-2xl bg-gradient-to-br from-gray-50 to-sky-500/5 dark:from-navy-dark/80 dark:to-navy-card border border-gray-200 dark:border-navy-border space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200/60 dark:border-navy-border/60 pb-3">
+                  <div>
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                      <i class="fa-solid fa-calculator text-accent"></i>
+                      Notas do Certificado da Classe Anterior (6ª ou 9ª Classe)
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      Insira as notas das disciplinas principais (0 a 20 valores). O sistema calculará a média e avaliará automaticamente a admissão!
+                    </p>
+                  </div>
+                  <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-accent/15 text-accent border border-accent/30 self-start sm:self-auto flex items-center gap-1.5">
+                    <i class="fa-solid fa-robot animate-pulse"></i> Análise Automática
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <!-- Língua Portuguesa -->
+                  <div>
+                    <label for="input-grade-portuguese" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1.5">
+                      Língua Portuguesa (0 a 20) <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="input-grade-portuguese" 
+                      min="0" 
+                      max="20" 
+                      step="0.5" 
+                      placeholder="Ex: 14" 
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-dark/90 text-gray-900 dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                      required
+                    >
+                  </div>
+
+                  <!-- Matemática -->
+                  <div>
+                    <label for="input-grade-math" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1.5">
+                      Matemática (0 a 20) <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="input-grade-math" 
+                      min="0" 
+                      max="20" 
+                      step="0.5" 
+                      placeholder="Ex: 16" 
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-dark/90 text-gray-900 dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                      required
+                    >
+                  </div>
+
+                  <!-- Ciências / História -->
+                  <div>
+                    <label for="input-grade-science" class="block text-xs font-bold text-gray-700 dark:text-gray-200 mb-1.5">
+                      Ciências / História (0 a 20) <span class="text-rose-500">*</span>
+                    </label>
+                    <input 
+                      type="number" 
+                      id="input-grade-science" 
+                      min="0" 
+                      max="20" 
+                      step="0.5" 
+                      placeholder="Ex: 15" 
+                      class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-dark/90 text-gray-900 dark:text-white font-bold text-sm focus:outline-none focus:ring-2 focus:ring-accent"
+                      required
+                    >
+                  </div>
+                </div>
+
+                <!-- Card de Resultado da Análise Automática em Tempo Real -->
+                <div id="calc-average-card" class="p-4 rounded-xl bg-white dark:bg-navy-card border border-gray-200 dark:border-navy-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all">
+                  <div class="flex items-center gap-3">
+                    <div id="calc-average-icon-container" class="w-12 h-12 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-xl shrink-0">
+                      <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <div>
+                      <span class="text-xs text-gray-400 block font-medium">Média Final Calculada:</span>
+                      <div class="flex items-baseline gap-2">
+                        <span id="calc-average-value" class="text-2xl font-extrabold text-gray-900 dark:text-white font-mono">--</span>
+                        <span class="text-xs text-gray-400">/ 20 valores</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Badge da Decisão Automática do Sistema -->
+                  <div id="calc-average-decision-badge" class="px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-navy-dark border border-gray-200 dark:border-navy-border text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-circle-question text-gray-400"></i>
+                    <span id="calc-average-decision-text" class="font-semibold text-gray-500 dark:text-gray-400">
+                      Preencha as 3 notas para o sistema avaliar a admissão
+                    </span>
+                  </div>
+                </div>
+
+                <div class="text-[11px] text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-circle-info text-accent"></i>
+                  <span>Regra do Sistema: <strong>Média &gt;= 10 valores</strong> = <span class="text-emerald-500 font-bold">ADMITIDO</span> • <strong>Média &lt; 10 valores</strong> = <span class="text-rose-500 font-bold">NÃO ADMITIDO</span>.</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ------------------------------------------------------------ -->
+            <!-- ETAPA 3: SUBMISSÃO DE DOCUMENTOS ESCOLARES                   -->
+            <!-- ------------------------------------------------------------ -->
+            <div id="step-content-3" class="space-y-6 hidden">
+              <div class="border-b border-gray-100 dark:border-navy-border/70 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-sm">
+                      <i class="fa-solid fa-file-arrow-up"></i>
+                    </span>
+                    Etapa 3: Upload de Documentos Escolares do Aluno
+                  </h2>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Anexe os documentos necessários para a abertura do processo escolar (PDF, JPG, PNG até 10 MB cada).
+                  </p>
+                </div>
+                <button 
+                  type="button" 
+                  id="btn-load-mock-docs" 
+                  class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-accent/15 hover:bg-accent text-accent hover:text-white transition-all flex items-center gap-1.5 self-start sm:self-auto"
+                >
+                  <i class="fa-solid fa-folder-open"></i> Carregar Exemplo Automático
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <!-- 1. Documento do Aluno (BI ou Cédula) -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
+                      1. BI ou Cédula Pessoal / Assento <span class="text-rose-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-gray-400">PDF ou Imagem</span>
+                  </div>
+
+                  <div id="drop-zone-bi" class="drop-zone p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-navy-dark/50 min-h-[170px]">
+                    <input type="file" id="file-input-bi" accept=".pdf,.png,.jpg,.jpeg" class="hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center text-xl mb-2">
+                      <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-200">Arraste o BI/Cédula aqui</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">ou clique para selecionar</p>
+                  </div>
+
+                  <div id="preview-bi" class="hidden p-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/5 dark:bg-emerald-500/10 min-h-[170px] flex flex-col justify-between">
+                    <div class="flex items-start gap-3">
+                      <div class="file-preview-icon shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">
+                          <i class="fa-solid fa-circle-check"></i> Pronto para envio
+                        </span>
+                        <p class="file-preview-name text-xs font-bold text-gray-900 dark:text-white truncate">arquivo.pdf</p>
+                        <p class="file-preview-size text-[11px] text-gray-400">1.2 MB</p>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove-file mt-3 w-full py-1.5 rounded-lg text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-trash-can"></i> Remover Arquivo
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2. Certificado ou Declaração com Notas -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
+                      2. Certificado / Declaração de Notas <span class="text-rose-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-gray-400">Da 6ª ou 9ª Classe</span>
+                  </div>
+
+                  <div id="drop-zone-certificate" class="drop-zone p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-navy-dark/50 min-h-[170px]">
+                    <input type="file" id="file-input-certificate" accept=".pdf,.png,.jpg,.jpeg" class="hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl mb-2">
+                      <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-200">Arraste a Declaração de Notas</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">ou clique para selecionar</p>
+                  </div>
+
+                  <div id="preview-certificate" class="hidden p-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/5 dark:bg-emerald-500/10 min-h-[170px] flex flex-col justify-between">
+                    <div class="flex items-start gap-3">
+                      <div class="file-preview-icon shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">
+                          <i class="fa-solid fa-circle-check"></i> Pronto para envio
+                        </span>
+                        <p class="file-preview-name text-xs font-bold text-gray-900 dark:text-white truncate">declaracao.pdf</p>
+                        <p class="file-preview-size text-[11px] text-gray-400">2.4 MB</p>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove-file mt-3 w-full py-1.5 rounded-lg text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-trash-can"></i> Remover Arquivo
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 3. Fotografia Passe do Aluno -->
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="text-xs font-bold text-gray-700 dark:text-gray-200">
+                      3. Fotografia Tipo Passe do Aluno <span class="text-rose-500">*</span>
+                    </label>
+                    <span class="text-[10px] text-gray-400">Fundo branco/neutro</span>
+                  </div>
+
+                  <div id="drop-zone-photo" class="drop-zone p-6 rounded-2xl flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-navy-dark/50 min-h-[170px]">
+                    <input type="file" id="file-input-photo" accept=".png,.jpg,.jpeg" class="hidden">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-xl mb-2">
+                      <i class="fa-solid fa-camera"></i>
+                    </div>
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-200">Arraste a Foto do Aluno</p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">ou clique para selecionar</p>
+                  </div>
+
+                  <div id="preview-photo" class="hidden p-4 rounded-2xl border border-emerald-500/40 bg-emerald-500/5 dark:bg-emerald-500/10 min-h-[170px] flex flex-col justify-between">
+                    <div class="flex items-start gap-3">
+                      <div class="file-preview-icon shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">
+                          <i class="fa-solid fa-circle-check"></i> Foto Anexada
+                        </span>
+                        <p class="file-preview-name text-xs font-bold text-gray-900 dark:text-white truncate">foto.jpg</p>
+                        <p class="file-preview-size text-[11px] text-gray-400">650 KB</p>
+                      </div>
+                    </div>
+                    <button type="button" class="btn-remove-file mt-3 w-full py-1.5 rounded-lg text-xs font-semibold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-trash-can"></i> Remover Foto
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Aviso Oficial da Secretaria -->
+              <div class="p-4 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-800 dark:text-sky-300 flex items-start gap-3">
+                <i class="fa-solid fa-circle-info text-base mt-0.5 text-accent shrink-0"></i>
+                <div class="leading-relaxed">
+                  <span class="font-bold">Nota da Secretaria Pedagógica:</span> Para admissão no <strong>1º Ciclo (7ª Classe)</strong> é indispensável a declaração de conclusão da 6ª classe primária. Para ingresso no <strong>2º Ciclo (10ª Classe)</strong>, é exigida a certidão de conclusão da 9ª classe emitida pela escola de origem com carimbo oficial.
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ------------------------------------------------------------ -->
+            <!-- ETAPA 4: RESUMO & CONFIRMAÇÃO                                -->
+            <!-- ------------------------------------------------------------ -->
+            <div id="step-content-4" class="space-y-6 hidden">
+              <div class="border-b border-gray-100 dark:border-navy-border/70 pb-4">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                  </span>
+                  Etapa 4: Revisão do Processo de Inscrição & Confirmação
+                </h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  O Encarregado de Educação deve conferir atentamente todas as informações antes de finalizar.
+                </p>
+              </div>
+
+              <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <!-- Resumo dos Dados do Aluno & Encarregado -->
+                <div class="lg:col-span-2 space-y-5">
+                  
+                  <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border">
+                    <div class="flex items-center gap-4 mb-4">
+                      <img id="summary-photo-preview" src="https://images.unsplash.com/photo-1544717305-2782549b5136?w=150&auto=format&fit=crop&q=80" class="w-16 h-16 rounded-2xl object-cover border-2 border-accent/40 shadow-sm" alt="Foto Aluno">
+                      <div>
+                        <h3 id="summary-fullname" class="font-bold text-base text-gray-900 dark:text-white">Nome do Aluno</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2 mt-0.5">
+                          <span id="summary-document-id" class="text-accent font-semibold">--</span> • 
+                          <span>Nasc: <span id="summary-birthdate">--</span></span>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-3 border-t border-gray-200/60 dark:border-navy-border/60">
+                      <div>
+                        <span class="text-gray-400 block">Encarregado de Educação:</span>
+                        <span id="summary-guardian" class="font-bold text-gray-900 dark:text-white">--</span>
+                      </div>
+                      <div>
+                        <span class="text-gray-400 block">Telefone do Encarregado:</span>
+                        <span id="summary-phone" class="font-semibold text-gray-800 dark:text-gray-200">--</span>
+                      </div>
+                      <div class="sm:col-span-2">
+                        <span class="text-gray-400 block">Local de Residência:</span>
+                        <span id="summary-location" class="font-semibold text-gray-800 dark:text-gray-200">--</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-accent mb-3 flex items-center gap-1.5">
+                      <i class="fa-solid fa-school"></i> Nível Escolar & Classe Pretendida
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span class="text-gray-400 block">Ciclo Escolar:</span>
+                        <span id="summary-cycle" class="font-bold text-accent">--</span>
+                      </div>
+                      <div>
+                        <span class="text-gray-400 block">Opção / Curso:</span>
+                        <span id="summary-course" class="font-bold text-sm text-gray-900 dark:text-white">--</span>
+                      </div>
+                      <div>
+                        <span class="text-gray-400 block">Turno:</span>
+                        <span id="summary-shift" class="font-semibold text-gray-800 dark:text-gray-200">--</span>
+                      </div>
+                      <div>
+                        <span class="text-gray-400 block">Modalidade de Acesso:</span>
+                        <span id="summary-modality" class="font-semibold text-gray-800 dark:text-gray-200">--</span>
+                      </div>
+                      <div class="sm:col-span-2">
+                        <span class="text-gray-400 block">Campus Escolar:</span>
+                        <span id="summary-campus" class="font-semibold text-gray-800 dark:text-gray-200">--</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bloco de Notas e Veredito Automático do Sistema -->
+                  <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <h4 class="text-xs font-bold uppercase tracking-wider text-accent flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator"></i> Notas & Análise Automática de Admissão
+                      </h4>
+                      <span id="summary-system-verdict-badge" class="px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 self-start sm:self-auto bg-gray-200 dark:bg-navy-dark text-gray-500">
+                        <i class="fa-solid fa-robot"></i> Analisando...
+                      </span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200/60 dark:border-navy-border/60">
+                        <span class="text-gray-400 block text-[11px]">Português:</span>
+                        <strong id="summary-grade-portuguese" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+                      </div>
+                      <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200/60 dark:border-navy-border/60">
+                        <span class="text-gray-400 block text-[11px]">Matemática:</span>
+                        <strong id="summary-grade-math" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+                      </div>
+                      <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200/60 dark:border-navy-border/60">
+                        <span class="text-gray-400 block text-[11px]">Ciências:</span>
+                        <strong id="summary-grade-science" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+                      </div>
+                      <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-accent/40 bg-accent/5">
+                        <span class="text-gray-400 block text-[11px]">Média Calculada:</span>
+                        <strong id="summary-average-value" class="text-base font-extrabold text-accent font-mono">--</strong>
+                      </div>
+                    </div>
+
+                    <p id="summary-system-verdict-desc" class="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-200/60 dark:border-navy-border/60">
+                      O sistema avaliará automaticamente a admissão com base na média calculada (mínimo de 10 valores).
+                    </p>
+                  </div>
+
+                </div>
+
+                <!-- Resumo Documental & Taxa -->
+                <div class="space-y-5">
+                  
+                  <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-accent mb-3 flex items-center gap-1.5">
+                      <i class="fa-solid fa-file-lines"></i> Processo Documental
+                    </h4>
+                    <div id="summary-docs-list" class="space-y-2">
+                      <!-- Preenchido via JS -->
+                    </div>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-gradient-to-br from-accent/10 to-sky-500/5 dark:from-navy-dark dark:to-navy-card border border-accent/30 text-xs">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-gray-500 dark:text-gray-400 font-medium">Taxa de Inscrição Escolar:</span>
+                      <span class="font-extrabold text-base text-accent">3.500,00 Kz</span>
+                    </div>
+                    <p class="text-[11px] text-gray-500 dark:text-gray-400">
+                      Inclui abertura de pasta individual do aluno e direito à realização da prova de diagnóstico / seleção.
+                    </p>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Termo de Responsabilidade do Encarregado -->
+              <div class="p-5 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input type="checkbox" id="terms-accept" class="mt-1 w-4 h-4 rounded text-accent focus:ring-accent border-gray-300 dark:border-navy-border">
+                  <span class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Eu, Encarregado de Educação, declaro sob compromisso de honra que todas as informações prestadas e os documentos escolares anexados são autênticos e verdadeiros, autorizando a verificação dos dados junto da Direcção Municipal de Educação e da escola de origem. <span class="text-rose-500">*</span>
+                  </span>
+                </label>
+              </div>
+
+            </div>
+
+            <!-- ------------------------------------------------------------ -->
+            <!-- BOTÕES DE NAVEGAÇÃO DO FORMULÁRIO (FOOTER)                   -->
+            <!-- ------------------------------------------------------------ -->
+            <div class="flex items-center justify-between pt-6 border-t border-gray-100 dark:border-navy-border/70 mt-8">
+              
+              <button 
+                type="button" 
+                id="step-btn-prev" 
+                class="px-5 py-2.5 rounded-xl border border-gray-300 dark:border-navy-border text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-navy-light font-semibold text-xs transition-all flex items-center gap-2 invisible"
+              >
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Etapa Anterior</span>
+              </button>
+
+              <div class="flex items-center gap-3">
+                <button 
+                  type="button" 
+                  id="step-btn-next" 
+                  class="px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-white font-bold text-xs shadow-lg shadow-accent/25 transition-all flex items-center gap-2"
+                >
+                  <span>Continuar</span>
+                  <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+                <button 
+                  type="button" 
+                  id="step-btn-submit" 
+                  class="px-7 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-extrabold text-sm shadow-xl shadow-emerald-500/25 transition-all flex items-center gap-2.5 hidden"
+                >
+                  <i class="fa-solid fa-check"></i>
+                  <span>Finalizar Inscrição</span>
+                </button>
+              </div>
+
+            </div>
+
+          </form>
+        </div>
+
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- SUB-VIEW 1.B: DASHBOARD DO CANDIDATO / ENCARREGADO (PÓS-INSCRIÇÃO)  -->
+      <!-- ================================================================== -->
+      <div id="candidate-dashboard-wrapper" class="space-y-8 hidden">
+        
+        <!-- Banner Superior -->
+        <div class="bg-gradient-to-r from-navy-card to-navy-dark p-6 sm:p-8 rounded-3xl border border-navy-border shadow-lg text-white flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-accent/20 border border-accent/40 text-accent flex items-center justify-center text-2xl shrink-0">
+              <i class="fa-solid fa-id-badge"></i>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2.5 mb-1">
+                <span class="text-xs font-bold text-gray-400">Portal do Aluno / Encarregado</span>
+                <span class="text-gray-600">•</span>
+                <div class="inline-flex items-center gap-1.5">
+                  <span id="dash-candidate-code" class="px-2.5 py-0.5 rounded-md font-mono font-bold text-xs bg-accent text-white shadow-sm">
+                    SEC-2025-XXXX
+                  </span>
+                  <button id="btn-copy-protocol" type="button" class="text-xs text-gray-400 hover:text-white p-1" title="Copiar Código de Inscrição">
+                    <i class="fa-regular fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+              <h2 id="dash-candidate-name" class="text-xl sm:text-2xl font-extrabold tracking-tight">
+                Nome do Aluno
+              </h2>
+              <p id="dash-candidate-course" class="text-xs text-gray-300 mt-0.5 font-medium">
+                10ª Classe - Técnico de Informática • Turno Manhã
+              </p>
+              <p id="dash-candidate-date" class="text-[11px] text-gray-400 mt-1">
+                Inscrição registrada em: --
+              </p>
+            </div>
+          </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+            <button 
+              id="btn-dash-search-again" 
+              type="button" 
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-white/10 hover:bg-white/20 text-white transition-all flex items-center gap-2 border border-white/10"
+              title="Consultar outro código de verificação"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i> Consultar Outro Código
+            </button>
+            <button 
+              id="btn-new-application" 
+              type="button" 
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-white transition-all flex items-center gap-2 shadow-md"
+            >
+              <i class="fa-solid fa-plus"></i> Nova Inscrição
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Cards do Dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+          <!-- Coluna 1 & 2: Situação da Inscrição & Ações -->
+          <div class="lg:col-span-2 space-y-6">
+            
+            <div id="dash-status-container" class="bg-white dark:bg-navy-card p-6 sm:p-8 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Situação da Inscrição Escolar</span>
+                <span id="dash-status-badge" class="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 bg-amber-500/20 text-amber-500 border border-amber-500/30">
+                  <i id="dash-status-icon" class="fa-solid fa-hourglass-half"></i> Em Análise
+                </span>
+              </div>
+
+              <h3 id="dash-status-title" class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-2">
+                Processo Escolar em Análise Documental
+              </h3>
+              <p id="dash-status-desc" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                A documentação do aluno e os dados do Encarregado de Educação foram recebidos com sucesso e estão sob conferência da Secretaria Pedagógica.
+              </p>
+
+              <!-- Botões de Ação -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-4 border-t border-gray-100 dark:border-navy-border/70">
+                
+                <button 
+                  id="btn-dash-comprovativo" 
+                  type="button" 
+                  class="p-4 rounded-2xl bg-accent hover:bg-accent-hover text-white transition-all flex items-center gap-3.5 shadow-md shadow-accent/20 group"
+                >
+                  <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-file-pdf"></i>
+                  </div>
+                  <div class="text-left">
+                    <div class="font-bold text-xs">Ficha Escolar de Inscrição</div>
+                    <div class="text-[11px] text-white/80">Imprimir Comprovativo Oficial</div>
+                  </div>
+                </button>
+
+                <button 
+                  id="btn-dash-guia" 
+                  type="button" 
+                  class="p-4 rounded-2xl bg-gray-100 dark:bg-navy-dark/80 hover:bg-gray-200 dark:hover:bg-navy-light text-gray-900 dark:text-white transition-all flex items-center gap-3.5 border border-gray-200 dark:border-navy-border group"
+                >
+                  <div class="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-receipt"></i>
+                  </div>
+                  <div class="text-left">
+                    <div class="font-bold text-xs">Guia da Taxa de Inscrição</div>
+                    <div class="text-[11px] text-gray-500 dark:text-gray-400">Referência Multicaixa (3.500 Kz)</div>
+                  </div>
+                </button>
+
+              </div>
+            </div>
+
+            <!-- Boletim de Notas e Análise Automática de Admissão -->
+            <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 dark:border-navy-border/60 pb-3">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-calculator"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">Boletim Escolar & Média de Conclusão</h4>
+                    <p class="text-[11px] text-gray-400">Notas analisadas pelo sistema para homologação de vaga</p>
+                  </div>
+                </div>
+
+                <div id="dash-system-verdict-badge" class="px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 self-start sm:self-auto bg-emerald-500/20 text-emerald-500 border border-emerald-500/30">
+                  <i class="fa-solid fa-robot"></i>
+                  <span id="dash-system-decision">Admitido</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                <div class="p-3 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Língua Portuguesa:</span>
+                  <div class="text-base font-extrabold text-gray-900 dark:text-white mt-0.5">
+                    <span id="dash-grade-portuguese">--</span> <span class="text-[10px] text-gray-400 font-normal">/ 20</span>
+                  </div>
+                </div>
+                <div class="p-3 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Matemática:</span>
+                  <div class="text-base font-extrabold text-gray-900 dark:text-white mt-0.5">
+                    <span id="dash-grade-math">--</span> <span class="text-[10px] text-gray-400 font-normal">/ 20</span>
+                  </div>
+                </div>
+                <div class="p-3 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Ciências / História:</span>
+                  <div class="text-base font-extrabold text-gray-900 dark:text-white mt-0.5">
+                    <span id="dash-grade-science">--</span> <span class="text-[10px] text-gray-400 font-normal">/ 20</span>
+                  </div>
+                </div>
+                <div class="p-3 rounded-2xl bg-accent/10 border border-accent/30">
+                  <span class="text-gray-400 block text-[11px]">Média Calculada:</span>
+                  <div class="text-lg font-extrabold text-accent mt-0.5 font-mono">
+                    <span id="dash-student-average">--</span> <span class="text-[10px] text-gray-400 font-normal">/ 20</span>
+                  </div>
+                </div>
+              </div>
+
+              <div id="dash-verdict-note-box" class="p-3.5 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-xs text-sky-800 dark:text-sky-300 flex items-start gap-2.5">
+                <i class="fa-solid fa-circle-info text-accent text-sm mt-0.5 shrink-0"></i>
+                <div id="dash-verdict-explanation" class="leading-relaxed">
+                  Critério de Admissão: Alunos com média igual ou superior a 10 valores são admitidos automaticamente para matrícula.
+                </div>
+              </div>
+            </div>
+
+            <!-- Detalhes do Aluno no Dashboard -->
+            <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-accent mb-4 flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-info"></i> Resumo da Candidatura Escolar
+              </h4>
+
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-navy-dark/50 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Modalidade:</span>
+                  <span id="dash-detail-modality" class="font-bold text-gray-800 dark:text-gray-200">--</span>
+                </div>
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-navy-dark/50 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Ciclo Escolar:</span>
+                  <span id="dash-detail-campus" class="font-bold text-gray-800 dark:text-gray-200">2º Ciclo</span>
+                </div>
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-navy-dark/50 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Documentação:</span>
+                  <span id="dash-detail-docs-status" class="font-bold text-emerald-500">Validados</span>
+                </div>
+                <div class="p-3 rounded-xl bg-gray-50 dark:bg-navy-dark/50 border border-gray-200/60 dark:border-navy-border/60">
+                  <span class="text-gray-400 block text-[11px]">Nota Diagnóstico:</span>
+                  <span id="dash-detail-grade" class="font-bold text-gray-400">Pendente</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Coluna 3: Linha do Tempo Escolar -->
+          <div class="space-y-6">
+            <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-accent mb-5 flex items-center gap-2">
+                <i class="fa-solid fa-timeline"></i> Cronograma de Admissão Escolar
+              </h4>
+
+              <div class="space-y-6 relative pl-3">
+                <div class="absolute left-6 top-3 bottom-3 w-0.5 bg-gray-200 dark:bg-navy-border"></div>
+
+                <div id="timeline-step-1" class="relative flex items-start gap-4">
+                  <div class="timeline-icon w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shadow-md z-10 shrink-0">
+                    <i class="fa-solid fa-check"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">1. Inscrição Escolar Realizada</h5>
+                    <p class="timeline-desc text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Protocolo emitido online</p>
+                  </div>
+                </div>
+
+                <div id="timeline-step-2" class="relative flex items-start gap-4">
+                  <div class="timeline-icon w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold shadow-md ring-4 ring-accent/30 pulse-badge z-10 shrink-0">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">2. Conferência de Pastas</h5>
+                    <p class="timeline-desc text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Em análise pela Secretaria</p>
+                  </div>
+                </div>
+
+                <div id="timeline-step-3" class="relative flex items-start gap-4">
+                  <div class="timeline-icon w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-dark text-gray-400 flex items-center justify-center text-xs font-bold z-10 shrink-0">
+                    <i class="fa-regular fa-circle"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">3. Provas de Diagnóstico / Acesso</h5>
+                    <p class="timeline-desc text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Dias 25 a 27 de Outubro</p>
+                  </div>
+                </div>
+
+                <div id="timeline-step-4" class="relative flex items-start gap-4">
+                  <div class="timeline-icon w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-dark text-gray-400 flex items-center justify-center text-xs font-bold z-10 shrink-0">
+                    <i class="fa-regular fa-circle"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">4. Publicação das Listas de Admissão</h5>
+                    <p class="timeline-desc text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Previsão: 28 de Outubro</p>
+                  </div>
+                </div>
+
+                <div id="timeline-step-5" class="relative flex items-start gap-4">
+                  <div class="timeline-icon w-7 h-7 rounded-full bg-gray-200 dark:bg-navy-dark text-gray-400 flex items-center justify-center text-xs font-bold z-10 shrink-0">
+                    <i class="fa-regular fa-circle"></i>
+                  </div>
+                  <div>
+                    <h5 class="font-bold text-xs text-gray-900 dark:text-white">5. Confirmação de Matrícula</h5>
+                    <p class="timeline-desc text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">De 01 a 10 de Novembro</p>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Bloco de Contato Escolar -->
+            <div class="p-5 rounded-3xl bg-gray-100 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border text-xs space-y-2">
+              <h5 class="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                <i class="fa-solid fa-phone-volume text-accent"></i> Atendimento da Secretaria Escolar
+              </h5>
+              <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-[11px]">
+                Dúvidas sobre turmas e transferências? Contacte a Direcção Pedagógica: <strong>secretaria@cl-futuro.ao</strong> ou <strong>+244 923 000 111</strong>.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- VISÃO 2: PAINEL ADMINISTRATIVO (SECRETARIA ESCOLAR & PEDAGÓGICA)     -->
+    <!-- ==================================================================== -->
+    <div id="view-admin" class="space-y-8 hidden">
+      
+      <!-- Cabeçalho do Admin -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-navy-card p-6 sm:p-8 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-accent/15 text-accent border border-accent/25 mb-2">
+            <i class="fa-solid fa-school-flag"></i> Direcção Pedagógica & Secretaria Escolar
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+            Gestão de Matrículas e Admissões • 1º e 2º Ciclo
+          </h1>
+          <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">
+            Conferência de processos dos alunos, validação de documentos, lançamento de notas e homologação de turmas.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button 
+            id="btn-admin-quick-add" 
+            type="button" 
+            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-accent hover:bg-accent-hover text-white transition-all flex items-center gap-2 shadow-md shadow-accent/20"
+          >
+            <i class="fa-solid fa-user-plus"></i> + Novo Aluno Teste
+          </button>
+
+          <button 
+            id="btn-admin-reset-data" 
+            type="button" 
+            class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-navy-dark text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-navy-light transition-all flex items-center gap-2 border border-gray-200 dark:border-navy-border"
+            title="Restaurar banco de dados demonstrativo escolar"
+          >
+            <i class="fa-solid fa-arrows-rotate"></i> Restaurar Dados Iniciais
+          </button>
+        </div>
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- CARDS KPI DE RESUMO GERENCIAL ESCOLAR                              -->
+      <!-- ================================================================== -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- KPI 1: Total Alunos Inscritos -->
+        <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-1">
+              Alunos Inscritos
+            </span>
+            <div id="kpi-total-candidates" class="text-3xl font-extrabold text-gray-900 dark:text-white font-mono">
+              6
+            </div>
+            <span class="text-[11px] text-emerald-500 font-semibold flex items-center gap-1 mt-1">
+              <i class="fa-solid fa-arrow-trend-up"></i> 1º e 2º Ciclo
+            </span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-accent/15 text-accent flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-users"></i>
+          </div>
+        </div>
+
+        <!-- KPI 2: Pastas Pendentes -->
+        <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-1">
+              Pastas Pendentes
+            </span>
+            <div id="kpi-pending-docs" class="text-3xl font-extrabold text-amber-500 font-mono">
+              2
+            </div>
+            <span class="text-[11px] text-amber-500 font-semibold flex items-center gap-1 mt-1">
+              <i class="fa-solid fa-clock"></i> Requer conferência
+            </span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-500 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+        </div>
+
+        <!-- KPI 3: Alunos Admitidos -->
+        <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-1">
+              Alunos Admitidos
+            </span>
+            <div id="kpi-approved-candidates" class="text-3xl font-extrabold text-emerald-500 font-mono">
+              2
+            </div>
+            <span class="text-[11px] text-emerald-500 font-semibold flex items-center gap-1 mt-1">
+              <i class="fa-solid fa-circle-check"></i> Vagas confirmadas
+            </span>
+          </div>
+          <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-500 flex items-center justify-center text-xl shrink-0">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+        </div>
+
+        <!-- KPI 4: Ocupação das Vagas nas Turmas -->
+        <div class="bg-white dark:bg-navy-card p-6 rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Vagas Ocupadas
+              </span>
+              <span id="kpi-slots-percent" class="text-xs font-bold text-accent">0%</span>
+            </div>
+            <div id="kpi-occupied-slots" class="text-xl font-extrabold text-gray-900 dark:text-white font-mono">
+              2 / 240 vagas
+            </div>
+          </div>
+          <div class="w-full bg-gray-200 dark:bg-navy-dark rounded-full h-2.5 mt-3 overflow-hidden">
+            <div id="kpi-slots-bar" class="bg-gradient-to-r from-accent to-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 2%;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================================================================== -->
+      <!-- TABELA DE ALUNOS COM BUSCA & FILTROS EM TEMPO REAL                 -->
+      <!-- ================================================================== -->
+      <div class="bg-white dark:bg-navy-card rounded-3xl border border-gray-200/80 dark:border-navy-border shadow-sm overflow-hidden">
+        
+        <div class="p-6 border-b border-gray-100 dark:border-navy-border/70 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+          
+          <div class="relative flex-1 max-w-md">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+              <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            </span>
+            <input 
+              type="text" 
+              id="admin-search-input" 
+              placeholder="Buscar por aluno, encarregado, BI ou protocolo..."
+              class="w-full pl-9 pr-4 py-2 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent text-xs transition-all"
+            >
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            
+            <select 
+              id="admin-filter-course" 
+              class="px-3.5 py-2 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+            >
+              <option value="all">Todos os Níveis & Cursos</option>
+              <option value="1º Ciclo">1º Ciclo do Ensino Secundário (7ª à 9ª)</option>
+              <option value="2º Ciclo Geral">2º Ciclo Geral (Liceu / PUNIV)</option>
+              <option value="Técnico de Informática">10ª Classe - Técnico de Informática</option>
+              <option value="Ciências Físicas e Biológicas">10ª Classe - Ciências Físicas e Biológicas</option>
+              <option value="Ciências Económicas e Jurídicas">10ª Classe - Ciências Económicas e Jurídicas</option>
+              <option value="Contabilidade e Gestão">10ª Classe - Contabilidade e Gestão</option>
+            </select>
+
+            <select 
+              id="admin-filter-status" 
+              class="px-3.5 py-2 rounded-xl border border-gray-300 dark:border-navy-border bg-gray-50 dark:bg-navy-dark/70 text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+            >
+              <option value="all">Todos os Estados</option>
+              <option value="Pendentes">Pastas em Análise</option>
+              <option value="Convocado para Prova">Convocados para Prova</option>
+              <option value="Admitido">Admitidos (Aprovados)</option>
+              <option value="Não Admitido">Não Admitidos</option>
+            </select>
+
+            <span id="admin-table-count" class="text-xs text-gray-400 font-medium ml-auto lg:ml-2">
+              Exibindo 6 de 6 alunos
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-gray-200 dark:border-navy-border/80 bg-gray-50/50 dark:bg-navy-dark/40 text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th class="py-3.5 px-4">Protocolo</th>
+                <th class="py-3.5 px-4">Aluno & Encarregado</th>
+                <th class="py-3.5 px-4">Classe / Curso Pretendido</th>
+                <th class="py-3.5 px-4">Média Escolar</th>
+                <th class="py-3.5 px-4">Decisão Sistema</th>
+                <th class="py-3.5 px-4">Situação Final</th>
+                <th class="py-3.5 px-4 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="admin-candidates-table-body" class="divide-y divide-gray-100 dark:divide-navy-border/40 text-xs">
+              <!-- Renderizado dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ====================================================================== -->
+  <!-- MODAL 1: ANÁLISE DETALHADA DO PROCESSO ESCOLAR (SECRETARIA)            -->
+  <!-- ====================================================================== -->
+  <div id="modal-review-candidate" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden overflow-y-auto">
+    <div class="relative w-full max-w-3xl my-8 bg-white dark:bg-navy-card rounded-3xl border border-gray-200 dark:border-navy-border shadow-2xl overflow-hidden animate-fade-in">
+      
+      <!-- Cabeçalho -->
+      <div class="p-6 bg-gradient-to-r from-navy-card to-navy-dark text-white border-b border-navy-border flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-accent/20 border border-accent/40 text-accent flex items-center justify-center text-lg shrink-0">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="modal-rev-id" class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-accent text-white">SEC-2025-XXXX</span>
+              <span class="text-xs text-gray-300">Conferência Pedagógica</span>
+            </div>
+            <h3 id="modal-rev-fullname" class="text-base sm:text-lg font-bold text-white mt-0.5">Nome do Aluno</h3>
+          </div>
+        </div>
+        <button id="btn-close-review-modal" class="text-gray-400 hover:text-white p-2 rounded-xl transition-colors">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Corpo com Scroll -->
+      <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        
+        <!-- Bloco 1: Dados do Aluno e Encarregado -->
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border text-xs space-y-3">
+          <h4 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-[11px] text-accent flex items-center gap-1.5">
+            <i class="fa-solid fa-address-card"></i> Identificação Escolar & Familiar
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div><span class="text-gray-400 block">Opção Escolar:</span><strong id="modal-rev-course" class="text-gray-900 dark:text-white">--</strong></div>
+            <div><span class="text-gray-400 block">Documento do Aluno:</span><strong id="modal-rev-bi" class="text-gray-900 dark:text-white">--</strong></div>
+            <div><span class="text-gray-400 block">Data de Nasc.:</span><strong id="modal-rev-birth" class="text-gray-900 dark:text-white">--</strong></div>
+            <div><span class="text-gray-400 block">Encarregado / Contato:</span><span id="modal-rev-phone" class="text-gray-800 dark:text-gray-200">--</span></div>
+            <div><span class="text-gray-400 block">E-mail:</span><span id="modal-rev-email" class="text-gray-800 dark:text-gray-200 break-all">--</span></div>
+            <div><span class="text-gray-400 block">Modalidade:</span><span id="modal-rev-modality" class="text-gray-800 dark:text-gray-200">--</span></div>
+            <div class="col-span-2 sm:col-span-3"><span class="text-gray-400 block">Nível / Ciclo:</span><span id="modal-rev-campus" class="text-gray-800 dark:text-gray-200">--</span></div>
+            <div class="col-span-2 sm:col-span-3"><span class="text-gray-400 block">Endereço Residencial:</span><span id="modal-rev-address" class="text-gray-800 dark:text-gray-200">--</span></div>
+          </div>
+        <!-- Bloco: Boletim Escolar e Avaliação Automática -->
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-3">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-[11px] text-accent flex items-center gap-1.5">
+              <i class="fa-solid fa-calculator"></i> Notas do Aluno & Média Calculada
+            </h4>
+            <span id="modal-rev-system-verdict-badge" class="px-2.5 py-1 rounded-md text-xs font-bold flex items-center gap-1 bg-emerald-500/20 text-emerald-500 border border-emerald-500/30">
+              <i class="fa-solid fa-robot"></i> <span id="modal-rev-system-verdict-title">Admitido</span>
+            </span>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+            <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200 dark:border-navy-border">
+              <span class="text-gray-400 block text-[10px]">Português:</span>
+              <strong id="modal-rev-grade-portuguese" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200 dark:border-navy-border">
+              <span class="text-gray-400 block text-[10px]">Matemática:</span>
+              <strong id="modal-rev-grade-math" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-white dark:bg-navy-card border border-gray-200 dark:border-navy-border">
+              <span class="text-gray-400 block text-[10px]">Ciências / Hist.:</span>
+              <strong id="modal-rev-grade-science" class="text-sm font-bold text-gray-900 dark:text-white">--</strong>
+            </div>
+            <div class="p-2.5 rounded-xl bg-accent/10 border border-accent/30">
+              <span class="text-gray-400 block text-[10px]">Média Calculada:</span>
+              <strong id="modal-rev-average-value" class="text-base font-extrabold text-accent font-mono">--</strong>
+            </div>
+          </div>
+
+          <div class="text-[11px] text-gray-500 dark:text-gray-400 flex flex-wrap items-center justify-between gap-2 pt-1">
+            <span>Análise do Sistema: <strong id="modal-rev-system-verdict-text" class="text-emerald-500 font-bold">Admitido</strong> (Média &gt;= 10 valores)</span>
+            <button id="btn-modal-apply-system-verdict" type="button" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-accent/15 text-accent hover:bg-accent hover:text-white transition-colors flex items-center gap-1">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Aplicar Decisão do Sistema
+            </button>
+          </div>
+        </div>
+
+        <!-- Bloco 2: Validação da Pasta Escolar -->
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-[11px] text-accent flex items-center gap-1.5">
+              <i class="fa-solid fa-folder-open"></i> Pasta de Documentos do Aluno
+            </h4>
+            <span id="modal-rev-docs-status-badge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-500/20 text-amber-500">
+              Em Conferência
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card flex items-center justify-between">
+              <div class="min-w-0 pr-2">
+                <span class="text-[10px] text-gray-400 block">1. BI / Cédula do Aluno</span>
+                <p id="modal-rev-doc-bi-name" class="font-bold text-xs truncate text-gray-800 dark:text-gray-200">BI_Doc.pdf</p>
+                <span id="modal-rev-doc-bi-size" class="text-[10px] text-gray-400">1.2 MB</span>
+              </div>
+              <i class="fa-solid fa-file-pdf text-accent text-lg"></i>
+            </div>
+
+            <div class="p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card flex items-center justify-between">
+              <div class="min-w-0 pr-2">
+                <span class="text-[10px] text-gray-400 block">2. Declaração com Notas</span>
+                <p id="modal-rev-doc-cert-name" class="font-bold text-xs truncate text-gray-800 dark:text-gray-200">Certificado.pdf</p>
+                <span id="modal-rev-doc-cert-size" class="text-[10px] text-gray-400">2.4 MB</span>
+              </div>
+              <i class="fa-solid fa-file-invoice text-emerald-500 text-lg"></i>
+            </div>
+
+            <div class="p-3 rounded-xl border border-gray-200 dark:border-navy-border bg-white dark:bg-navy-card flex items-center justify-between">
+              <div class="min-w-0 pr-2">
+                <span class="text-[10px] text-gray-400 block">3. Fotografia Passe</span>
+                <p id="modal-rev-doc-photo-name" class="font-bold text-xs truncate text-gray-800 dark:text-gray-200">Foto_Passe.jpg</p>
+                <span id="modal-rev-doc-photo-size" class="text-[10px] text-gray-400">680 KB</span>
+              </div>
+              <i class="fa-solid fa-image text-amber-500 text-lg"></i>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div class="flex flex-wrap items-center gap-3">
+              <button 
+                id="btn-rev-approve-docs" 
+                type="button" 
+                class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <i class="fa-solid fa-check-double"></i> Homologar Documentos
+              </button>
+              <button 
+                id="btn-rev-reject-docs" 
+                type="button" 
+                class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+              >
+                <i class="fa-solid fa-xmark"></i> Rejeitar Documentos
+              </button>
+            </div>
+
+            <div>
+              <label for="modal-rev-rejection-reason" class="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+                Motivo da Não Homologação (Orientações para o Encarregado):
+              </label>
+              <textarea 
+                id="modal-rev-rejection-reason" 
+                rows="2" 
+                placeholder="Ex: Declaração de notas da 6ª/9ª classe sem o carimbo da Direcção Municipal..." 
+                class="w-full p-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-card text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloco 3: Prova Diagnóstica / Seleção -->
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-3">
+          <h4 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-[11px] text-accent flex items-center gap-1.5">
+            <i class="fa-solid fa-marker"></i> Prova de Diagnóstico / Admissão
+          </h4>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="w-48">
+              <label for="modal-rev-grade-input" class="block text-[11px] text-gray-500 mb-1">Nota da Prova (0 a 20):</label>
+              <input 
+                type="number" 
+                id="modal-rev-grade-input" 
+                min="0" 
+                max="20" 
+                step="0.1" 
+                placeholder="Ex: 15.5" 
+                class="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-card text-gray-900 dark:text-white text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+            </div>
+
+            <button 
+              id="btn-rev-save-grade" 
+              type="button" 
+              class="self-end px-4 py-2 rounded-xl bg-accent hover:bg-accent-hover text-white font-bold text-xs flex items-center gap-2 shadow-sm transition-all"
+            >
+              <i class="fa-solid fa-floppy-disk"></i> Gravar Nota
+            </button>
+          </div>
+        </div>
+
+        <!-- Bloco 4: Decisão Final da Secretaria Pedagógica -->
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/60 border border-gray-200 dark:border-navy-border space-y-3">
+          <h4 class="font-bold text-gray-900 dark:text-white uppercase tracking-wider text-[11px] text-accent flex items-center gap-1.5">
+            <i class="fa-solid fa-stamp"></i> Decisão de Admissão Escolar
+          </h4>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            <button 
+              type="button" 
+              data-status-choice="Admitido" 
+              class="p-2.5 rounded-xl border border-emerald-500/50 bg-emerald-500/10 hover:bg-emerald-500 hover:text-white text-emerald-500 font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-circle-check"></i> Admitido
+            </button>
+
+            <button 
+              type="button" 
+              data-status-choice="Convocado para Prova" 
+              class="p-2.5 rounded-xl border border-sky-500/50 bg-sky-500/10 hover:bg-accent hover:text-white text-accent font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-calendar-check"></i> Convocado
+            </button>
+
+            <button 
+              type="button" 
+              data-status-choice="Em Análise" 
+              class="p-2.5 rounded-xl border border-amber-500/50 bg-amber-500/10 hover:bg-amber-500 hover:text-white text-amber-500 font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-hourglass-half"></i> Em Análise
+            </button>
+
+            <button 
+              type="button" 
+              data-status-choice="Não Admitido" 
+              class="p-2.5 rounded-xl border border-rose-500/50 bg-rose-500/10 hover:bg-rose-500 hover:text-white text-rose-500 font-bold text-xs transition-all flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-circle-xmark"></i> Não Admitido
+            </button>
+          </div>
+
+          <div>
+            <label for="modal-rev-notes" class="block text-[11px] font-bold text-gray-600 dark:text-gray-300 mb-1">
+              Parecer da Direcção Pedagógica:
+            </label>
+            <textarea 
+              id="modal-rev-notes" 
+              rows="2" 
+              placeholder="Anotações internas sobre turma recomendada, média anterior ou histórico do aluno..." 
+              class="w-full p-2.5 rounded-xl border border-gray-300 dark:border-navy-border bg-white dark:bg-navy-card text-gray-900 dark:text-white text-xs focus:outline-none focus:ring-2 focus:ring-accent"
+            ></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="p-4 bg-gray-100 dark:bg-navy-dark border-t border-gray-200 dark:border-navy-border flex flex-wrap items-center justify-between gap-3">
+        <button 
+          id="btn-rev-view-as-candidate" 
+          type="button" 
+          class="px-4 py-2 rounded-xl text-xs font-semibold bg-gray-200 dark:bg-navy-card hover:bg-accent hover:text-white text-gray-700 dark:text-gray-200 transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-eye"></i> Ver no Portal do Aluno
+        </button>
+
+        <button 
+          id="btn-rev-save-notes" 
+          type="button" 
+          class="px-5 py-2 rounded-xl bg-accent hover:bg-accent-hover text-white font-bold text-xs transition-all flex items-center gap-2"
+        >
+          <i class="fa-solid fa-check"></i> Salvar e Concluir
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- MODAL 2: COMPROVATIVO ESCOLAR DE INSCRIÇÃO (IMPRIMÍVEL)                -->
+  <!-- ====================================================================== -->
+  <div id="modal-comprovativo" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden overflow-y-auto">
+    <div class="relative w-full max-w-2xl my-8 bg-white text-gray-900 rounded-3xl shadow-2xl overflow-hidden modal-print-target animate-fade-in border border-gray-300">
+      
+      <div class="no-print p-4 bg-navy-dark text-white flex items-center justify-between border-b border-navy-border">
+        <span class="text-xs font-bold flex items-center gap-2">
+          <i class="fa-solid fa-print text-accent"></i> Ficha Oficial de Inscrição Escolar
+        </span>
+        <div class="flex items-center gap-2">
+          <button id="btn-print-comprovativo" class="px-3.5 py-1.5 rounded-lg bg-accent text-white font-bold text-xs hover:bg-accent-hover transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-print"></i> Imprimir / Salvar PDF
+          </button>
+          <button id="btn-close-comp-modal" class="text-gray-400 hover:text-white p-1.5 rounded-lg transition-colors">
+            <i class="fa-solid fa-xmark text-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="p-8 space-y-6 print-page font-sans bg-white">
+        
+        <div class="text-center pb-4 border-b-2 border-gray-800 space-y-1">
+          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-600">República de Angola</p>
+          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-600">Ministério da Educação • Governo Provincial de Luanda</p>
+          <p class="text-[10px] font-bold tracking-widest uppercase text-gray-600">Direcção Municipal da Educação</p>
+          <h2 class="text-base font-extrabold uppercase text-gray-900 tracking-tight mt-1">
+            Complexo Escolar & Liceu Politécnico do Futuro (CL-FUTURO)
+          </h2>
+          <p class="text-xs font-semibold text-gray-700">Gabinete de Admissões • 1º e 2º Ciclo do Ensino Secundário</p>
+          <div class="inline-block mt-2 px-3 py-1 bg-gray-100 border border-gray-400 text-xs font-bold uppercase tracking-wider">
+            Ficha Oficial de Inscrição Escolar • Ano Letivo 2025/2026
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs border-b border-gray-300 pb-3">
+          <div>
+            <span class="text-gray-500 block">Número do Protocolo Escolar:</span>
+            <strong id="comp-id" class="text-sm font-mono font-bold text-gray-900">SEC-2025-XXXX</strong>
+          </div>
+          <div class="text-right">
+            <span class="text-gray-500 block">Data de Emissão:</span>
+            <span id="comp-date" class="font-medium text-gray-700">--</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-800 bg-gray-100 p-1.5 border-l-4 border-gray-800">
+            1. Dados do Aluno e Encarregado de Educação
+          </h4>
+          <table class="w-full text-xs border border-gray-300">
+            <tbody>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50 w-1/3">Nome do Aluno:</td>
+                <td id="comp-name" class="p-2 uppercase font-semibold">--</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Documento do Aluno:</td>
+                <td id="comp-bi" class="p-2 font-mono">--</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Encarregado de Educação:</td>
+                <td id="comp-phone" class="p-2">--</td>
+              </tr>
+              <tr>
+                <td class="p-2 font-bold bg-gray-50">E-mail de Contato:</td>
+                <td id="comp-email" class="p-2">--</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-gray-800 bg-gray-100 p-1.5 border-l-4 border-gray-800">
+            2. Nível de Ensino, Classe e Prova de Seleção
+          </h4>
+          <table class="w-full text-xs border border-gray-300">
+            <tbody>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50 w-1/3">Ciclo de Ensino:</td>
+                <td id="comp-campus" class="p-2 font-bold">2º Ciclo do Ensino Secundário</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Classe / Curso:</td>
+                <td id="comp-course" class="p-2 font-semibold">--</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Turno de Aulas:</td>
+                <td id="comp-shift" class="p-2">--</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Modalidade:</td>
+                <td id="comp-modality" class="p-2">--</td>
+              </tr>
+              <tr class="border-b border-gray-200">
+                <td class="p-2 font-bold bg-gray-50">Data da Prova de Diagnóstico:</td>
+                <td id="comp-exam-date" class="p-2 font-semibold">26 de Outubro de 2025 às 08:30</td>
+              </tr>
+              <tr>
+                <td class="p-2 font-bold bg-gray-50">Sala / Bloco Designado:</td>
+                <td id="comp-exam-room" class="p-2 font-semibold">Sala 12 - Bloco A</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pt-4 border-t border-gray-300 flex items-center justify-between gap-4">
+          <div class="text-left space-y-1">
+            <svg class="h-10 w-44" viewBox="0 0 100 25">
+              <rect x="0" y="0" width="3" height="25" fill="#000"/>
+              <rect x="5" y="0" width="2" height="25" fill="#000"/>
+              <rect x="9" y="0" width="4" height="25" fill="#000"/>
+              <rect x="15" y="0" width="1" height="25" fill="#000"/>
+              <rect x="18" y="0" width="3" height="25" fill="#000"/>
+              <rect x="23" y="0" width="2" height="25" fill="#000"/>
+              <rect x="27" y="0" width="5" height="25" fill="#000"/>
+              <rect x="34" y="0" width="2" height="25" fill="#000"/>
+              <rect x="38" y="0" width="3" height="25" fill="#000"/>
+              <rect x="43" y="0" width="4" height="25" fill="#000"/>
+              <rect x="49" y="0" width="1" height="25" fill="#000"/>
+              <rect x="52" y="0" width="3" height="25" fill="#000"/>
+              <rect x="57" y="0" width="2" height="25" fill="#000"/>
+              <rect x="61" y="0" width="4" height="25" fill="#000"/>
+              <rect x="67" y="0" width="1" height="25" fill="#000"/>
+              <rect x="70" y="0" width="3" height="25" fill="#000"/>
+              <rect x="75" y="0" width="2" height="25" fill="#000"/>
+              <rect x="79" y="0" width="4" height="25" fill="#000"/>
+              <rect x="85" y="0" width="2" height="25" fill="#000"/>
+              <rect x="89" y="0" width="3" height="25" fill="#000"/>
+              <rect x="94" y="0" width="4" height="25" fill="#000"/>
+            </svg>
+            <span id="comp-barcode-number" class="text-[9px] font-mono tracking-widest text-gray-500 block text-center">
+              *SEC20250101*
+            </span>
+          </div>
+
+          <div class="text-center text-[10px] text-gray-500 space-y-1">
+            <div class="w-36 h-0.5 bg-gray-400 mx-auto mt-4"></div>
+            <span>Secretaria Pedagógica</span>
+            <span class="block text-[8px] text-gray-400">Chancela & Autenticação Escolar</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- MODAL 3: GUIA DE PAGAMENTO DA TAXA ESCOLAR                             -->
+  <!-- ====================================================================== -->
+  <div id="modal-guia" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden overflow-y-auto">
+    <div class="relative w-full max-w-md my-8 bg-white dark:bg-navy-card rounded-3xl border border-gray-200 dark:border-navy-border shadow-2xl overflow-hidden animate-fade-in">
+      
+      <div class="p-5 bg-gradient-to-r from-navy-card to-navy-dark text-white flex items-center justify-between border-b border-navy-border">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-accent/20 text-accent flex items-center justify-center text-base">
+            <i class="fa-solid fa-receipt"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm">Guia de Pagamento Escolar</h3>
+            <p class="text-[11px] text-gray-300">Taxa de Abertura de Pasta & Inscrição</p>
+          </div>
+        </div>
+        <button id="btn-close-guia-modal" class="text-gray-400 hover:text-white p-1.5 rounded-lg transition-colors">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        
+        <div class="text-center py-2">
+          <span class="text-xs text-gray-500 dark:text-gray-400">Valor Total da Taxa de Inscrição:</span>
+          <div class="text-2xl font-extrabold text-accent mt-0.5">3.500,00 Kz</div>
+          <span class="text-[10px] text-gray-400">Três Mil e Quinhentos Kwanzas</span>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-gray-50 dark:bg-navy-dark/70 border border-gray-200 dark:border-navy-border space-y-3 text-xs">
+          
+          <div class="flex items-center justify-between border-b border-gray-200 dark:border-navy-border pb-2">
+            <span class="text-gray-500 dark:text-gray-400">Entidade:</span>
+            <strong class="font-mono text-sm text-gray-900 dark:text-white">00542 (CL-FUTURO)</strong>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-gray-200 dark:border-navy-border pb-2">
+            <span class="text-gray-500 dark:text-gray-400">Referência:</span>
+            <div class="flex items-center gap-2">
+              <strong id="guia-reference" class="font-mono text-sm text-accent tracking-wider">928 341 512</strong>
+              <button id="btn-copy-guia-ref" class="text-accent hover:text-accent-hover text-xs p-1" title="Copiar Referência">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-gray-200 dark:border-navy-border pb-2">
+            <span class="text-gray-500 dark:text-gray-400">Aluno:</span>
+            <span id="guia-candidate-name" class="font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[180px]">--</span>
+          </div>
+
+          <div class="flex items-center justify-between border-b border-gray-200 dark:border-navy-border pb-2">
+            <span class="text-gray-500 dark:text-gray-400">Classe / Opção:</span>
+            <span id="guia-course" class="font-semibold text-gray-800 dark:text-gray-200 truncate max-w-[180px]">--</span>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-gray-500 dark:text-gray-400">Nº Protocolo:</span>
+            <span id="guia-candidate-id" class="font-mono font-bold text-gray-800 dark:text-gray-200">--</span>
+          </div>
+
+        </div>
+
+        <div class="text-[11px] text-gray-500 dark:text-gray-400 space-y-1.5 leading-relaxed">
+          <p><strong>Instruções para o Encarregado de Educação:</strong></p>
+          <p>1. Efetue o pagamento via Multicaixa Express, ATM bancário ou balcão.</p>
+          <p>2. Opção: <em>Pagamentos &gt; Pagamentos por Referência</em>.</p>
+          <p>3. Guarde o talão de pagamento para anexar ao processo físico no dia da prova.</p>
+        </div>
+
+      </div>
+
+      <div class="p-4 bg-gray-50 dark:bg-navy-dark border-t border-gray-200 dark:border-navy-border text-center">
+        <button onclick="document.getElementById('modal-guia').classList.add('hidden'); document.body.style.overflow='';" class="w-full py-2.5 rounded-xl bg-accent text-white font-bold text-xs hover:bg-accent-hover transition-all">
+          Entendido, Fechar Guia
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====================================================================== -->
+  <!-- FOOTER INSTITUCIONAL ESCOLAR                                           -->
+  <!-- ====================================================================== -->
+  <footer class="mt-auto w-full bg-white dark:bg-navy-dark border-t border-gray-200/80 dark:border-navy-border/60 py-8 transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500 dark:text-gray-400">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-accent/15 text-accent flex items-center justify-center font-bold">
+          <i class="fa-solid fa-school"></i>
+        </div>
+        <div>
+          <span class="font-bold text-gray-900 dark:text-white">CL-FUTURO</span> • Complexo Escolar & Liceu Politécnico do Futuro
+          <div class="text-[11px]">Direcção Municipal da Educação • Ano Letivo 2025/2026.</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <span class="flex items-center gap-1.5 text-emerald-500 font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Secretaria Pedagógica Online
+        </span>
+        <span class="hidden sm:inline">•</span>
+        <span class="text-[11px]">Sistema Seguro de Gestão de Matrículas</span>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Script Principal da Aplicação -->
+  <script src="app.js"></script>
+</body>
+</html>

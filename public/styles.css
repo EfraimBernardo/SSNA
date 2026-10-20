@@ -1,212 +1,242 @@
 /* ==========================================================================
-   PORTAL DE ADMISSÕES / SISTEMA DE SELEÇÃO DE NOVOS ALUNOS (SSNA)
-   Estilos Personalizados & Design System
-   Paleta: Azul Escuro Noturno (#0B192C, #1E3E62, #008BFF)
+   SISTEMA INTEGRADO DE GESTÃO DE MATRÍCULAS E ADMISSÕES (SIGMA / SSNA)
+   República de Angola • Direcção Municipal da Educação
+   Complexo Escolar do Ensino Secundário Geral e Politécnico
+   Design System Institucional Oficial • Padrão Governamental
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap');
 
 :root {
-  --color-primary: #0B192C;
-  --color-secondary: #1E3E62;
-  --color-accent: #008BFF;
-  --color-accent-hover: #0066FF;
-  --color-surface-light: #FFFFFF;
-  --color-bg-light: #F4F6F9;
-  --color-text-light: #1A202C;
-  --color-text-dark: #F7FAFC;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
+  --color-gov-navy: #0B1528;
+  --color-gov-surface: #132238;
+  --color-gov-surface-light: #182C47;
+  --color-gov-border: #223E63;
+  --color-gov-accent: #1D4ED8;
+  --color-gov-accent-hover: #1E40AF;
+  
+  --color-light-bg: #F8FAFC;
+  --color-light-card: #FFFFFF;
+  --color-light-border: #E2E8F0;
+  --color-light-text: #0F172A;
+  --color-light-muted: #64748B;
+
+  --color-status-success: #059669;
+  --color-status-warning: #D97706;
+  --color-status-danger: #DC2626;
+  --color-status-info: #2563EB;
 }
 
-/* Tipografia Base */
+/* Tipografia Base Institucional */
 body {
   font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
   overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+/* Tipografia Monospaçada Oficial (Protocolos, BIs, Códigos) */
+.font-mono,
+code,
+.font-code {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.02em;
 }
 
 /* Transições Suaves Gerais */
 * {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+  transition-property: background-color, border-color, color, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
+  transition-duration: 150ms;
 }
 
-/* Scrollbar Personalizada */
+/* Scrollbar Sóbria e Profissional */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: rgba(11, 25, 44, 0.5);
+  background: #0B1528;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 139, 255, 0.3);
-  border-radius: 9999px;
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #223E63;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 139, 255, 0.6);
+  background: #94A3B8;
 }
 
-/* Efeito de Vidro Fosco (Glassmorphism) */
-.glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #2E5382;
 }
 
-.dark .glass-panel {
-  background: rgba(30, 62, 98, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-/* Efeitos de Brilho Suave (Glow) */
-.glow-accent {
-  box-shadow: 0 0 25px -5px rgba(0, 139, 255, 0.4);
-}
-
-.glow-card:hover {
-  box-shadow: 0 10px 25px -5px rgba(0, 102, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-.dark .glow-card:hover {
-  box-shadow: 0 10px 25px -5px rgba(0, 139, 255, 0.25);
-}
-
-/* Stepper - Linha de Conexão */
+/* Stepper Institucional - Linha Conectora */
 .stepper-line {
   position: absolute;
   top: 50%;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 2px;
   background-color: #E2E8F0;
   transform: translateY(-50%);
   z-index: 1;
 }
 
 .dark .stepper-line {
-  background-color: #1E3E62;
+  background-color: #223E63;
 }
 
 .stepper-progress {
   position: absolute;
   top: 50%;
   left: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #008BFF, #0066FF);
+  height: 2px;
+  background-color: #1D4ED8;
   transform: translateY(-50%);
   z-index: 2;
-  transition: width 0.4s ease-in-out;
+  transition: width 0.35s ease-in-out;
 }
 
-/* Drag and Drop Zone */
+/* Drag and Drop Zone Rigorosa */
 .drop-zone {
   border: 2px dashed #CBD5E1;
-  transition: all 0.25s ease-in-out;
+  background-color: rgba(248, 250, 252, 0.6);
+  transition: all 0.2s ease-in-out;
 }
 
 .dark .drop-zone {
-  border-color: #2E5784;
+  border-color: #223E63;
+  background-color: rgba(19, 34, 56, 0.4);
+}
+
+.drop-zone:hover {
+  border-color: #1D4ED8;
 }
 
 .drop-zone.dragover {
-  border-color: #008BFF;
-  background-color: rgba(0, 139, 255, 0.08);
-  transform: scale(1.01);
+  border-color: #1D4ED8;
+  background-color: rgba(29, 78, 216, 0.05);
 }
 
-/* Animações Customizadas */
+/* Animações Sutis */
 @keyframes fadeInScale {
   0% {
     opacity: 0;
-    transform: scale(0.96) translateY(6px);
+    transform: translateY(4px);
   }
   100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
   }
 }
 
 .animate-fade-in {
-  animation: fadeInScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(0, 139, 255, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 0 8px rgba(0, 139, 255, 0);
-  }
-}
-
-.pulse-badge {
-  animation: pulseGlow 2s infinite;
-}
-
-/* Modal Backdrop */
+/* Modal Backdrop Neutro */
 .modal-backdrop {
-  background-color: rgba(11, 25, 44, 0.65);
+  background-color: rgba(11, 21, 40, 0.75);
   backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
-/* Notificações Toast */
+/* Notificações Toast Institucionais */
 #toast-container {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 1.25rem;
+  right: 1.25rem;
   z-index: 9999;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
   pointer-events: none;
 }
 
 .toast-item {
   pointer-events: auto;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.25);
-  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  animation: toastSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes toastSlideIn {
   from {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
 @keyframes toastSlideOut {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
   to {
     opacity: 0;
-    transform: translateX(50px);
+    transform: translateY(-10px);
   }
 }
 
-/* Estilos de Impressão (Oficial para Comprovativo de Inscrição e Guia) */
+/* Carimbo Digital Oficial com Moldura e Autenticação */
+.official-digital-stamp {
+  border: 2px dashed #059669;
+  background: rgba(5, 150, 105, 0.04);
+  color: #059669;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  transform: rotate(-1.5deg);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 10px;
+}
+
+.dark .official-digital-stamp {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.08);
+  color: #34D399;
+}
+
+/* Marca d'água de documento oficial */
+.official-watermark {
+  background-image: radial-gradient(rgba(34, 62, 99, 0.08) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+/* ==========================================================================
+   ESTILOS DE IMPRESSÃO OFICIAL (DOCUMENTOS MINISTERIALS)
+   Compatível com A4, Comprovativos, Guias RUPE e Pautas Oficiais
+   ========================================================================== */
 @media print {
+  @page {
+    margin: 12mm 15mm 15mm 15mm;
+    size: A4 portrait;
+  }
+
   body {
     background: #FFFFFF !important;
     color: #000000 !important;
+    font-size: 11pt !important;
   }
 
   /* Ocultar elementos desnecessários na impressão */
@@ -216,18 +246,20 @@ body {
   #toast-container,
   .no-print,
   button,
-  .btn-print-hide {
+  .btn-print-hide,
+  #view-candidate,
+  #view-admin:not(.printing-pauta) {
     display: none !important;
   }
 
-  /* Exibir apenas a área do modal a ser impresso */
+  /* Exibir apenas a área do modal ou pauta a ser impresso */
   .modal-print-target {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 0 !important;
     background: #FFFFFF !important;
     color: #000000 !important;
     box-shadow: none !important;
@@ -236,13 +268,25 @@ body {
   }
 
   .modal-backdrop {
+    position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
+    padding: 0 !important;
   }
 
   .print-page {
     box-shadow: none !important;
-    border: 1px solid #CCCCCC !important;
-    padding: 24px !important;
+    border: 1px solid #1E293B !important;
+    padding: 20px !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  /* Pauta Impressa em Tabela Ministerial */
+  .pauta-print-page {
+    display: block !important;
+    width: 100% !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
   }
 }

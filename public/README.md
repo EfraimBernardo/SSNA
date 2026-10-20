@@ -1,62 +1,66 @@
-# Portal de Admissões de Novos Alunos • 1º e 2º Ciclo do Ensino Secundário (CL-FUTURO)
+# SIGMA • Sistema Integrado de Gestão de Matrículas e Admissões (SSNA)
+### República de Angola • Ministério da Educação • Governo Provincial de Luanda
+**Complexo Escolar nº 1245 do Ensino Secundário Geral e Politécnico**
 
-Aplicação Front-End completa, responsiva e de alta fidelidade desenvolvida especificamente para a **Gestão de Admissões e Inscrições no 1º e 2º Ciclo do Ensino Secundário** (Geral e Técnico-Profissional).
+Aplicação Front-End oficial, de padrão institucional e governamental, desenvolvida para a **Gestão de Admissões, Candidaturas e Homologação de Matrículas no 1º e 2º Ciclo do Ensino Secundário** (Ensino Geral e Técnico-Profissional).
 
 ---
 
-## 🏫 Contexto Educacional (1º e 2º Ciclo do Ensino Secundário)
+## 🏛️ Contexto Educacional & Estrutura Oficial
 
-A aplicação foi adaptada para contemplar a estrutura oficial do Ensino Secundário:
+A aplicação segue integralmente o currículo e as normas de admissão do Ensino Secundário em Angola:
 
 1. **1º Ciclo do Ensino Secundário Geral:**
-   - **7ª Classe:** Ingresso inicial pós-conclusão da 6ª classe do Ensino Primário.
-   - **8ª e 9ª Classe:** Transferência e continuidade escolar de outras instituições.
+   - **7ª Classe:** Ingresso regular após a conclusão da 6ª classe do Ensino Primário.
+   - **8ª e 9ª Classe:** Transferência institucional e continuidade escolar de outros estabelecimentos.
 2. **2º Ciclo do Ensino Secundário Geral (Liceu / PUNIV - 10ª à 12ª Classe):**
-   - **Ciências Físicas e Biológicas:** Preparação para as áreas de Medicina, Saúde e Ciências Naturais.
-   - **Ciências Económicas e Jurídicas:** Preparação para Economia, Gestão, Direito e Ciências Sociais.
+   - **Ciências Físicas e Biológicas:** Preparação pré-universitária para Medicina, Ciências da Saúde e Agronomia.
+   - **Ciências Económicas e Jurídicas:** Preparação pré-universitária para Economia, Gestão, Direito e Ciências Sociais.
 3. **2º Ciclo do Ensino Secundário Técnico (Instituto Politécnico - 10ª à 13ª Classe):**
-   - **Técnico de Informática:** Sistemas de Informação, Programação, Redes e Robótica.
-   - **Contabilidade e Gestão Empresarial:** Prática contábil, finanças e software de gestão.
-   - **Enfermagem Geral & Saúde:** Formação técnica de saúde com internato supervisionado.
-   - **Construção Civil & Desenho Projetista:** Topografia, desenho técnico e fiscalização de obras.
-4. **Dados do Aluno e do Encarregado de Educação:**
-   - Como os alunos do 1º e 2º ciclo são em geral menores de idade, o formulário inclui dados de identificação do **Aluno** (Cédula/Assento ou BI) e do **Encarregado de Educação** (Pai, Mãe ou Tutor Legal), com contatos diretos e termo de compromisso.
+   - **Técnico de Informática:** Sistemas de informação, desenvolvimento de software, redes de computadores e infraestruturas.
+   - **Contabilidade e Gestão Empresarial:** Prática contabilística, fiscalidade angolana e software de gestão.
+   - **Enfermagem Geral & Saúde:** Cuidados clínicos de saúde e internato hospitalar supervisionado.
+   - **Construção Civil & Desenho Projetista:** Topografia, desenho técnico em AutoCAD, medições e fiscalização de obras.
+4. **Identificação do Aluno e Responsabilidade do Encarregado:**
+   - Dados completos de identificação do **Aluno** (Bilhete de Identidade, Cédula Pessoal ou Assento de Nascimento).
+   - Dados oficiais do **Encarregado de Educação** (Pai, Mãe ou Tutor Legal), incluindo termos de responsabilidade sob compromisso de honra.
 
 ---
 
-## 🎨 Design System & Identidade Visual (Deep Navy)
+## 🎨 Design System Institucional (Padrão Governamental)
 
-- **Paleta de Cores Noturna:**
-  - **Primária Escura:** `#0B192C` (Fundo e cabeçalho no modo escuro)
-  - **Secundária:** `#1E3E62` (Cards, containers e painéis modais)
-  - **Ação / Accent:** `#008BFF` / `#0066FF` (Azul elétrico vibrante para botões principais, seleções ativas e badges)
-  - **Fundo Claro:** `#F4F6F9` | **Card Light:** `#FFFFFF`
-  - **Status Semânticos:**
-    - 🟢 Admitido / Homologado: `#10B981` (Emerald)
-    - 🟡 Em Análise / Pendente: `#F59E0B` (Amber)
-    - 🔴 Não Admitido / Rejeitado: `#EF4444` (Rose)
-    - 🔵 Convocado para Prova: `#008BFF` (Sky/Accent)
-- **Modo Claro / Modo Escuro:** Alternador fixo no cabeçalho com persistência em `LocalStorage` e transições suaves.
-- **Tipografia:** `Plus Jakarta Sans` e `Inter` para legibilidade institucional.
+- **Identidade Sóbria e Prestigiada:**
+  - **Fundo Noturno / Gov Navy:** `#0B1528`
+  - **Superfície / Cards Noturnos:** `#132238` / `#182C47`
+  - **Bordas Estruturadas:** `#223E63`
+  - **Azul Oficial / Accent:** `#1D4ED8` (Royal Blue Oficial) / `#1E40AF`
+  - **Fundo Claro / Light:** `#F8FAFC` (Slate 50) | **Card Light:** `#FFFFFF`
+  - **Status Semânticos Regulamentares:**
+    - Homologado / Admitido: `#059669` (Esmeralda Institucional)
+    - Em Conferência Documental: `#D97706` (Âmbar Institucional)
+    - Convocado para Exame: `#1D4ED8` (Azul Oficial)
+    - Não Apto / Rejeitado: `#DC2626` (Carmesim Institucional)
+- **Modo Claro / Modo Escuro:** Persistência em `LocalStorage` com transições instantâneas e alto contraste.
+- **Tipografia:** `Plus Jakarta Sans`, `Inter` e `JetBrains Mono` para protocolos e dados oficiais.
 
 ---
 
 ## 🚀 Como Executar a Aplicação
 
-A aplicação é uma Single Page Application (SPA) em HTML5, Tailwind CSS (via CDN) e Vanilla JavaScript, podendo ser aberta de várias formas:
+A aplicação é uma Single Page Application (SPA) completa em HTML5, Tailwind CSS e Vanilla JavaScript:
 
 ### 1. Execução Direta no Navegador
-Basta abrir o arquivo `index.html` em qualquer navegador moderno:
+Basta abrir o ficheiro `index.html` em qualquer navegador moderno:
 ```bash
 xdg-open index.html   # No Linux
-# ou duplo clique no arquivo index.html
+# ou duplo clique no ficheiro index.html
 ```
 
 ### 2. Via Servidor HTTP Local (Python)
 ```bash
 python3 -m http.server 3000
 ```
-Acesse `http://localhost:3000` no seu navegador.
+Aceda a `http://localhost:3000` no seu navegador.
 
 ### 3. Via NPM
 ```bash
@@ -65,43 +69,43 @@ npm start
 
 ---
 
-## 📱 Estrutura e Funcionalidades
+## 📋 Módulos e Funcionalidades
 
-### 👨‍🎓 Visão 1: Portal do Aluno & Encarregado de Educação
-1. **🔍 Consulta Rápida por Código de Verificação:**
-   - Campo de busca no topo do portal do candidato para digitar o número de protocolo (ex: `SEC-2025-0101`, `SEC-2025-0104`).
-   - Botões de acesso rápido com códigos de teste para demonstrar alunos em diferentes estados (Admitido, Em Análise, Convocado para Prova, Não Admitido).
-   - Localiza instantaneamente o processo e exibe o passo exato da esteira, boletim de notas, média e comprovativos.
-2. **Esteira de Progresso Interativa (Stepper em 4 Etapas):**
-   - **Etapa 1 - Aluno & Encarregado:** Dados do aluno (Nome, BI/Cédula/Assento de Nascimento, Data de Nasc, Gênero) + Dados do Encarregado de Educação (Nome, Grau de Parentesco, Telefone, E-mail e Residência).
-   - **Etapa 2 - Ciclo, Opção Escolar & Notas do Histórico:**
-     - Filtros por ciclo (1º Ciclo, 2º Ciclo Geral, 2º Ciclo Técnico), cursos e classes (7ª à 10ª).
-     - **Cálculo Automático de Média:** Lançamento das notas do ciclo anterior (Língua Portuguesa, Matemática e Ciências da Natureza / Físico-Química de 0 a 20 valores).
-     - **Veredito Autônomo do Sistema em Tempo Real:**
-       - **Média >= 10.0 valores:** Aluno automaticamente qualificado como **Admitido**.
-       - **Média < 10.0 valores:** Aluno classificado como **Não Admitido** (abaixo da nota de corte).
-   - **Etapa 3 - Submissão de Documentos Escolares:** Zonas de *Drag and Drop* para BI/Cédula do Aluno, Declaração de Notas da classe anterior e Foto tipo passe, com botão de preenchimento rápido para demonstração.
-   - **Etapa 4 - Resumo & Confirmação:** Revisão consolidada dos dados, exibição do boletim de notas e parecer do sistema, aceite do termo de responsabilidade pelo Encarregado e efeito comemorativo (*Confetti*).
-3. **Dashboard do Candidato & Acompanhamento:**
-   - Número de protocolo escolar emitido com botão de cópia instantânea.
-   - Boletim escolar com notas detalhadas, média calculada e parecer de admissão do sistema.
-   - Acompanhamento da linha do tempo escolar (Inscrição, Conferência de Pastas, Provas de Diagnóstico/Acesso, Publicação de Listas e Confirmação de Matrícula).
-   - Modal da **Ficha Oficial de Inscrição Escolar** com código de barras, carimbo digital e formato otimizado para impressão (`window.print()`).
-   - Modal da **Guia de Pagamento da Taxa Escolar (DUM)** com código de entidade, referência bancária copiável e instruções.
+### 👨‍🎓 Módulo 1: Portal do Aluno & Encarregado de Educação
+1. **Consulta Rápida por Protocolo de Candidatura:**
+   - Campo de localização rápida do processo por código (ex: `SEC-2025-0101`, `SEC-2025-0104`).
+   - Códigos de teste rápido com estados reais (Admitido, Em Conferência, Convocado, Não Apto).
+2. **Esteira de Candidatura em 4 Etapas:**
+   - **Etapa 1 - Aluno & Encarregado:** Dados do aluno e dados do Encarregado de Educação com validação completa.
+   - **Etapa 2 - Opção Curricular & Notas do Histórico:**
+     - Filtros por nível (1º Ciclo, 2º Ciclo Geral, 2º Ciclo Técnico), 8 cursos e classes.
+     - **Cálculo da Média Ponderada:** Disciplinas de Língua Portuguesa, Matemática e Ciências (0.0 a 20.0 valores).
+     - **Parecer Regulamentar em Tempo Real:** Média ≥ 10.0 valores qualifica para admissão; Média < 10.0 valores classifica como Não Apto.
+   - **Etapa 3 - Ficheiros Escolares:**
+     - Uploads para BI/Cédula, Certificado de Notas e Foto Tipo Passe.
+     - **Visualizador Oficial de Documentos:** Botão "Visualizar Ficheiro" com modal dedicado para inspeção visual do documento.
+   - **Etapa 4 - Resumo & Declaração de Compromisso:**
+     - Resumo cadastral, boletim escolar homologado e termo de responsabilidade do encarregado de educação.
+3. **Dashboard do Candidato:**
+   - Protocolo institucional com botão de cópia instantânea.
+   - Boletim de notas com cálculo da média e despacho oficial.
+   - Linha do tempo de tramitação do processo em 5 fases.
+   - **Ficha Oficial de Inscrição Escolar** com código de barras institucional e chancela digital pronta para impressão (`window.print()`).
+   - **Guia DUM / RUPE** com entidade bancária, referência para Multicaixa Express e valor regulamentar (3.500,00 Kz).
+   - **Guia de Requisitos para Matrícula Presencial** com checklist completa dos documentos físicos exigidos no balcão da secretaria.
 
-### 👨‍💼 Visão 2: Painel Administrativo (Secretaria Escolar & Pedagógica)
-1. **Cards KPI Gerenciais:**
-   - Total de Alunos Inscritos (1º e 2º Ciclo).
-   - Pastas Pendentes de Conferência.
-   - Alunos Admitidos / Vagas Confirmadas.
-   - Taxa de Ocupação das Vagas nas turmas com barra de progresso visual.
-2. **Tabela de Alunos com Filtros Dinâmicos:**
-   - Pré-carregada com **alunos fictícios** em diferentes ciclos (7ª, 8ª, 10ª classe técnico e liceu).
-   - Colunas detalhadas: Protocolo, Nome do Aluno & Encarregado, Ciclo / Curso / Classe, **Média Escolar**, **Decisão do Sistema** e Situação.
-   - Filtros instantâneos por texto (Aluno, Encarregado, BI, Protocolo), Ciclo/Curso e Situação.
-   - Botão para adicionar alunos de teste em tempo real e botão de restauração.
-3. **Modal de Análise da Secretaria:**
-   - Painel do Boletim de Notas do Aluno com média ponderada e veredito do sistema em destaque.
-   - Botão **"Aplicar Decisão do Sistema"** para acatar instantaneamente a regra de admissão (>= 10 Admitido, < 10 Não Admitido).
-   - Capacidade de **Intervenção Manual da Secretaria/Direcção Pedagógica**: homologar/rejeitar documentos com motivo, lançar nota complementar e alterar o veredito para qualquer situação com justificativa.
-
+### 🏛️ Módulo 2: Secretaria Escolar & Direcção Pedagógica
+1. **Painel Gerencial & Indicadores (KPIs):**
+   - Total de candidaturas registadas, pastas em conferência, vagas homologadas e percentual de ocupação das turmas.
+2. **Gestão de Processos com Abas de Estado Rápidas:**
+   - Abas dinâmicas: *Todos*, *Homologados*, *Em Conferência*, *Convocados* e *Não Aptos*.
+   - Filtros adicionais por turno escolar (Manhã / Tarde) e curso.
+   - Pesquisa em tempo real por nome do aluno, encarregado, BI ou protocolo.
+3. **Exportação & Publicação Oficial:**
+   - **Exportar Pauta Oficial (CSV / Excel):** Gera ficheiro CSV com codificação UTF-8 BOM, pronto para abertura no Excel com todas as colunas de notas, médias e deliberações.
+   - **Imprimir Pauta Geral (A4 / PDF):** Documento oficial formatado com cabeçalho da República de Angola, tabela geral e assinaturas do Chefe de Secretaria e Directora Geral para afixação na vitrine da escola.
+4. **Modal de Despacho da Secretaria:**
+   - Painel do aluno com notas e botão *"Aplicar Parecer Regulamentar"*.
+   - **Visualizador de Ficheiros:** Acesso aos documentos anexados pelo encarregado.
+   - Homologação e rejeição com registo de motivo de não conformidade.
+   - Lançamento de notas de exames diagnósticos e parecer interno da Direcção Pedagógica.
